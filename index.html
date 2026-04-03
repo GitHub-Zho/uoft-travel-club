@@ -73,6 +73,7 @@
       display:flex; flex-direction:column;
       align-items:flex-start;
       position:relative; z-index:1;
+      background:var(--sand);
     }
 
     .avatar-ring {
@@ -207,58 +208,82 @@
       position:sticky; top:0;
       height:100vh;
       display:flex; align-items:center; justify-content:center;
-      background:var(--sand2);
+      background:var(--sand);
       overflow:hidden;
     }
-    /* subtle grid texture */
+    /* left-side soft gradient fade to blend with left column */
     .right::before {
       content:'';
       position:absolute; inset:0;
-      background-image:
-        linear-gradient(rgba(26,39,68,.04) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(26,39,68,.04) 1px,transparent 1px);
-      background-size:32px 32px;
+      background:linear-gradient(
+        to right,
+        rgba(233,229,220,0) 0%,
+        rgba(220,215,205,0.35) 100%
+      );
+      pointer-events:none;
     }
-    /* radial glow behind logo */
+    /* radial warm glow behind logo */
     .right::after {
       content:'';
       position:absolute;
-      width:520px; height:520px;
+      width:480px; height:480px;
       border-radius:50%;
-      background:radial-gradient(circle,rgba(184,149,90,.18) 0%,transparent 70%);
+      background:radial-gradient(circle,rgba(184,149,90,.15) 0%,transparent 68%);
       pointer-events:none;
+    }
+    /* subtle vertical divider line on the left edge of right panel */
+    .right-inner {
+      position:absolute; top:0; left:0; bottom:0; width:1px;
+      background:linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(184,149,90,.25) 30%,
+        rgba(184,149,90,.25) 70%,
+        transparent 100%
+      );
     }
     .logo-frame {
       position:relative; z-index:1;
-      display:flex; flex-direction:column; align-items:center; gap:20px;
+      display:flex; flex-direction:column; align-items:center; gap:16px;
+      padding:20px;
     }
     .logo-img {
-      width:min(72%,380px);
+      width:min(78%,400px);
       object-fit:contain;
-      filter:drop-shadow(0 12px 40px rgba(26,39,68,.18));
+      mix-blend-mode:multiply;
+      filter:drop-shadow(0 8px 28px rgba(26,39,68,.12));
       animation:floatLogo 5s ease-in-out infinite;
     }
     .logo-caption {
       font-family:'Playfair Display',serif;
-      font-size:.95rem; font-weight:700; color:var(--navy);
-      letter-spacing:.01em; opacity:.7;
+      font-size:.9rem; font-weight:700; color:var(--navy);
+      letter-spacing:.01em; opacity:.6;
       text-align:center;
     }
     .logo-caption span {
       display:block; font-family:'DM Sans',sans-serif;
-      font-size:.72rem; font-weight:400; color:var(--muted);
+      font-size:.7rem; font-weight:400; color:var(--muted);
       letter-spacing:.08em; text-transform:uppercase;
-      margin-top:4px;
+      margin-top:3px;
     }
+    /* floating decorative dots */
+    .dot {
+      position:absolute; border-radius:50%;
+      background:rgba(184,149,90,.18);
+      pointer-events:none;
+    }
+    .dot1 { width:120px;height:120px; top:12%; right:8%; animation:floatLogo 7s 1s ease-in-out infinite; }
+    .dot2 { width:60px;height:60px; bottom:18%; left:10%; animation:floatLogo 6s 2s ease-in-out infinite; }
+    .dot3 { width:35px;height:35px; top:35%; left:6%; animation:floatLogo 8s ease-in-out infinite; }
     /* corner accents */
     .corner {
-      position:absolute; width:60px; height:60px;
-      border-color:rgba(184,149,90,.3); border-style:solid;
+      position:absolute; width:50px; height:50px;
+      border-color:rgba(184,149,90,.2); border-style:solid;
     }
-    .corner.tl { top:32px; left:32px; border-width:2px 0 0 2px; }
-    .corner.tr { top:32px; right:32px; border-width:2px 2px 0 0; }
-    .corner.bl { bottom:32px; left:32px; border-width:0 0 2px 2px; }
-    .corner.br { bottom:32px; right:32px; border-width:0 2px 2px 0; }
+    .corner.tl { top:28px; left:28px; border-width:1.5px 0 0 1.5px; }
+    .corner.tr { top:28px; right:28px; border-width:1.5px 1.5px 0 0; }
+    .corner.bl { bottom:28px; left:28px; border-width:0 0 1.5px 1.5px; }
+    .corner.br { bottom:28px; right:28px; border-width:0 1.5px 1.5px 0; }
 
     @keyframes floatLogo {
       0%,100% { transform:translateY(0); }
@@ -399,6 +424,10 @@
 
     <!-- ── RIGHT: logo showcase ── -->
     <div class="right">
+      <div class="right-inner"></div>
+      <div class="dot dot1"></div>
+      <div class="dot dot2"></div>
+      <div class="dot dot3"></div>
       <div class="corner tl"></div>
       <div class="corner tr"></div>
       <div class="corner bl"></div>
