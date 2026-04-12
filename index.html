@@ -155,15 +155,25 @@
       transform:translateY(-2px);
       box-shadow:0 6px 20px rgba(26,39,68,.09);
     }
-    .act.hub {
-      background:#fff;
-      border:1.5px solid var(--gold);
-      box-shadow:0 2px 12px rgba(184,149,90,.15);
+    .events-banner {
+      display:flex; align-items:center; gap:12px;
+      width:100%; padding:11px 16px;
+      background:rgba(255,255,255,.5);
+      border:1px solid rgba(26,39,68,.1);
+      border-radius:10px;
+      text-decoration:none; color:var(--navy);
+      margin-bottom:20px;
+      transition:background .2s, box-shadow .2s, transform .15s;
     }
-    .act.hub .act-title { color:var(--gold); font-weight:700; }
-    .act.hub .act-sub   { color:rgba(26,39,68,.5); }
-    .act.hub .act-arrow { color:var(--gold); font-weight:700; }
-    .act.hub:hover { background:#fffcf7; box-shadow:0 6px 22px rgba(184,149,90,.25); transform:translateY(-2px); }
+    .events-banner:hover {
+      background:rgba(255,255,255,.8);
+      box-shadow:0 4px 14px rgba(26,39,68,.07);
+      transform:translateY(-1px);
+    }
+    .events-banner-icon { font-size:1rem; flex-shrink:0; }
+    .events-banner-txt { flex:1; font-size:.83rem; font-weight:600; }
+    .events-banner-sub { font-size:.72rem; font-weight:400; color:var(--muted); margin-top:1px; }
+    .events-banner-arrow { font-size:.85rem; color:var(--gold); flex-shrink:0; }
     .act.active {
       background:#fff; border-color:transparent;
       border-left:4px solid var(--gold);
@@ -388,16 +398,16 @@
         </a>
       </div>
 
+      <a href="https://linktr.ee/utetc" target="_blank" class="events-banner">
+        <span class="events-banner-icon">🔗</span>
+        <span class="events-banner-txt">Events &amp; Sign Ups
+          <div class="events-banner-sub">View all upcoming events · RSVP here</div>
+        </span>
+        <span class="events-banner-arrow">→</span>
+      </a>
+
       <div class="label" id="activities">Activities & Trips</div>
       <div class="links">
-        <a href="https://linktr.ee/utetc" target="_blank" class="act hub">
-          <div class="act-icon">🔗</div>
-          <div class="act-txt">
-            <div class="act-title">Events &amp; Sign Ups</div>
-            <div class="act-sub">View all upcoming events · RSVP here</div>
-          </div>
-          <div class="act-arrow">→</div>
-        </a>
         <a href="https://www.explorechina.ca/trips/explore-china-2026-summer" target="_blank" class="act active">
           <div class="act-icon">🌏</div>
           <div class="act-txt">
