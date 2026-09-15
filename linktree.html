@@ -155,6 +155,16 @@
   .card.featured .sub { color: rgba(255,255,255,0.58); }
   .card.featured .arrow { color: rgba(255,255,255,0.45); }
   .card.featured:hover { background: rgba(28,47,96,0.97); }
+  .card.ended {
+    background: rgba(118,118,118,0.12);
+    border-color: rgba(0,0,0,0.05);
+    color: #797979;
+    box-shadow: none;
+    cursor: default;
+    filter: grayscale(1);
+  }
+  .card.ended .sub { color: #929292; }
+  .card.ended .arrow { display: none; }
 
   .icon {
     width: 44px;
@@ -245,40 +255,48 @@
 
   <div class="links">
 
-    <a href="#signup" class="card featured">
-      <div class="icon">✈️</div>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLScXHlHbNJdQLQlVIEh5HpLcZY4ktfCqD3ZL-wdjUY6JTtb9UQ/viewform" target="_blank" rel="noopener" class="card featured">
+      <div class="icon">🏕️</div>
       <div class="txt">
-        <div class="title">🗺️ Sign Up for Next Trip</div>
-        <div class="sub">Register now — spots are limited!</div>
+        <div class="title">Algonquin Fall Camping Registration</div>
+        <div class="sub">October 2–4 · Enrolling now · C$50 deposit required</div>
       </div>
       <span class="arrow">→</span>
     </a>
 
     <div class="section-label">Explore the World</div>
 
-    <a href="https://www.explorechina.ca/trips/explore-china-2026-summer" target="_blank" class="card">
+    <div class="card ended" aria-disabled="true">
       <div class="icon">🌏</div>
       <div class="txt">
         <div class="title">Summer Exploration Trip</div>
-        <div class="sub">10-Day · Shanghai, Suzhou, Hangzhou &amp; Beijing · July 2026</div>
+        <div class="sub">Trip ended · Shanghai, Suzhou, Hangzhou &amp; Beijing · July 2026</div>
       </div>
-      <span class="arrow">→</span>
-    </a>
+    </div>
 
-    <a href="#" class="card">
+    <a href="algonquin-weekend" class="card">
       <div class="icon">📅</div>
       <div class="txt">
-        <div class="title">All Events &amp; Calendar</div>
-        <div class="sub">See what's coming up</div>
+        <div class="title">Algonquin Fall Camping Details</div>
+        <div class="sub">Pricing, gear, campsite, and carpool information</div>
       </div>
       <span class="arrow">→</span>
     </a>
 
-    <a href="#" class="card">
-      <div class="icon">👋</div>
+    <a href="output/pdf/algonquin-fall-camping-waiver-2026.pdf" target="_blank" rel="noopener" class="card">
+      <div class="icon">✍️</div>
       <div class="txt">
-        <div class="title">About Us</div>
-        <div class="sub">Meet the team &amp; our story</div>
+        <div class="title">Download &amp; Sign the Waiver</div>
+        <div class="sub">Email the completed PDF before submitting the form</div>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a href="/#activities" class="card">
+      <div class="icon">🧭</div>
+      <div class="txt">
+        <div class="title">All Events &amp; Club Website</div>
+        <div class="sub">Explore activities and membership information</div>
       </div>
       <span class="arrow">→</span>
     </a>

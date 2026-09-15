@@ -135,8 +135,11 @@
     }
     .registration h2 { margin-bottom:10px; color:#fff; }
     .registration p { max-width:680px; color:rgba(255,255,255,.7); font-size:.88rem; line-height:1.7; }
+    .registration-actions { display:grid; gap:10px; min-width:225px; }
     .registration .cta { min-width:190px; margin:0; background:var(--gold); color:var(--navy); }
     .registration .cta:hover { background:#c8a66c; }
+    .registration .cta.secondary { border:1px solid rgba(255,255,255,.42); background:transparent; color:#fff; }
+    .registration .cta.secondary:hover { background:rgba(255,255,255,.1); }
     footer { margin-top:40px; text-align:center; color:rgba(26,39,68,.45); font-size:.75rem; }
     footer a { color:var(--gold); text-decoration:none; }
     @media (max-width:780px) {
@@ -147,7 +150,7 @@
       .hero { gap:28px; }
       h1 { font-size:clamp(2.7rem,14vw,4.2rem); }
       .registration { padding:25px; }
-      .registration .cta { width:100%; }
+      .registration-actions, .registration .cta { width:100%; }
     }
     @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .cta { transition:none; } }
   </style>
@@ -259,8 +262,8 @@
           <p>Whether you are a beginner, whether you have your own gear, whether you need rental help, whether friends are joining you, and whether you can volunteer as a driver.</p>
         </article>
         <article class="panel">
-          <h3>Confirmed participants receive</h3>
-          <p>A detailed packing guide, sleeping-bag temperature guidance, tent and carpool assignments, meal planning, meeting instructions, park rules, and the participant waiver.</p>
+          <h3>Before you submit</h3>
+          <p>Download and sign the participant waiver, including the witness fields and the driver addendum if you are applying to drive. Email the signed waiver to uoft.travelclub@gmail.com. Confirmed participants will later receive the detailed packing guide, tent and carpool assignments, meal plan, and meeting instructions.</p>
         </article>
       </div>
     </section>
@@ -269,9 +272,12 @@
       <div>
         <div class="section-label">Registration</div>
         <h2>Ready for the weekend?</h2>
-        <p>Submit the short registration form. We will email you to confirm that your request was received and follow up with your status, deposit details, and next steps.</p>
+        <p>First download, sign, and email the signed waiver to <strong>uoft.travelclub@gmail.com</strong>. Then submit the short registration form after sending the required C$50 deposit. We will email you to confirm that your request was received and follow up with your status and next steps.</p>
       </div>
-      <a class="cta" href="https://docs.google.com/forms/d/e/1FAIpQLScXHlHbNJdQLQlVIEh5HpLcZY4ktfCqD3ZL-wdjUY6JTtb9UQ/viewform" target="_blank" rel="noopener">Open registration form →</a>
+      <div class="registration-actions">
+        <a class="cta secondary" href="output/pdf/algonquin-fall-camping-waiver-2026.pdf" target="_blank" rel="noopener">Download waiver PDF ↓</a>
+        <a class="cta" href="https://docs.google.com/forms/d/e/1FAIpQLScXHlHbNJdQLQlVIEh5HpLcZY4ktfCqD3ZL-wdjUY6JTtb9UQ/viewform" target="_blank" rel="noopener">Open registration form →</a>
+      </div>
     </section>
 
     <footer>UofT Exploration &amp; Travel Club · <a href="mailto:uoft.travelclub@gmail.com">uoft.travelclub@gmail.com</a></footer>
