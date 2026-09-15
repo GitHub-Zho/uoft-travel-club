@@ -89,6 +89,21 @@
     }
     .cta:hover { transform:translateY(-2px); background:var(--navy-soft); box-shadow:0 10px 24px rgba(26,39,68,.18); }
     .note { margin-top:12px; color:var(--muted); font-size:.72rem; line-height:1.55; text-align:center; }
+    .facility-callout {
+      display:grid; grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr);
+      gap:28px; align-items:center; margin-top:0; padding:28px 30px;
+      border:1px solid rgba(53,98,74,.2); border-radius:20px;
+      background:rgba(53,98,74,.08);
+    }
+    .facility-callout h2 { margin-bottom:10px; font-size:clamp(1.55rem,3vw,2.2rem); }
+    .facility-callout p { color:var(--muted); font-size:.88rem; line-height:1.65; }
+    .facility-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; list-style:none; }
+    .facility-list li {
+      padding:10px 12px; border:1px solid rgba(53,98,74,.16); border-radius:999px;
+      background:rgba(255,255,255,.56); color:var(--green);
+      font-size:.76rem; font-weight:600; text-align:center;
+    }
+    .facility-note { margin-top:9px; font-size:.74rem !important; }
     section { margin-top:48px; }
     .section-label {
       margin-bottom:12px; color:var(--gold);
@@ -147,6 +162,7 @@
       .brand { max-width:220px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
       main { width:min(100% - 28px,680px); padding-top:38px; }
       .hero, .grid, .pricing, .registration { grid-template-columns:1fr; }
+      .facility-callout { grid-template-columns:1fr; gap:20px; padding:24px; }
       .hero { gap:28px; }
       h1 { font-size:clamp(2.7rem,14vw,4.2rem); }
       .registration { padding:25px; }
@@ -179,6 +195,21 @@
         <p class="note">A C$50 registration deposit is required. If the trip is already full when we receive it, the deposit will be refunded.</p>
       </aside>
     </header>
+
+    <section class="facility-callout" aria-labelledby="facilities-title">
+      <div>
+        <div class="section-label">Campground comfort</div>
+        <h2 id="facilities-title">Comfortable campground setup</h2>
+        <p>This is a designated, drive-in public campground—not remote backcountry camping. Shared drinking water, hot showers, and flush toilets are available. Electricity is available at selected sites and will be confirmed with the final campsite assignment.</p>
+        <p class="facility-note">You’ll still sleep in a tent and bring your own sleeping gear.</p>
+      </div>
+      <ul class="facility-list" aria-label="Campground facilities">
+        <li>Drinking water</li>
+        <li>Hot showers</li>
+        <li>Flush toilets</li>
+        <li>Electricity available</li>
+      </ul>
+    </section>
 
     <section>
       <div class="section-label">Before you register</div>
