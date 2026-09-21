@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Join UTETC for a beginner-friendly fall camping weekend at Mew Lake in Algonquin Provincial Park, October 2–4, 2026." />
+  <meta name="description" content="Join UTETC for a beginner-friendly fall camping trip at Lake of Two Rivers in Algonquin Provincial Park, October 6–8, 2026." />
   <title>Algonquin Fall Camping — UTETC</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@0,300;0,400;0,500;0,600&display=swap" rel="stylesheet" />
@@ -89,6 +89,25 @@
     }
     .cta:hover { transform:translateY(-2px); background:var(--navy-soft); box-shadow:0 10px 24px rgba(26,39,68,.18); }
     .note { margin-top:12px; color:var(--muted); font-size:.72rem; line-height:1.55; text-align:center; }
+    .sessions {
+      display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
+      margin-bottom:20px;
+    }
+    .session {
+      display:flex; align-items:center; justify-content:space-between; gap:18px;
+      padding:18px 20px; border:1px solid var(--line); border-radius:16px;
+      background:var(--card);
+    }
+    .session h2 { margin:0 0 5px; font-size:1.12rem; }
+    .session p { color:var(--muted); font-size:.78rem; line-height:1.45; }
+    .session-status {
+      flex-shrink:0; padding:5px 10px; border-radius:999px;
+      font-size:.67rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+    }
+    .session.full { background:rgba(26,39,68,.06); color:rgba(26,39,68,.58); }
+    .session.full .session-status { background:rgba(26,39,68,.08); }
+    .session.open { border-left:4px solid var(--green); }
+    .session.open .session-status { color:var(--green); background:rgba(53,98,74,.1); }
     .facility-callout {
       display:grid; grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr);
       gap:28px; align-items:center; margin-top:0; padding:28px 30px;
@@ -161,7 +180,7 @@
       nav { padding:0 18px; }
       .brand { max-width:220px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
       main { width:min(100% - 28px,680px); padding-top:38px; }
-      .hero, .grid, .pricing, .registration { grid-template-columns:1fr; }
+      .hero, .sessions, .grid, .pricing, .registration { grid-template-columns:1fr; }
       .facility-callout { grid-template-columns:1fr; gap:20px; padding:24px; }
       .hero { gap:28px; }
       h1 { font-size:clamp(2.7rem,14vw,4.2rem); }
@@ -182,32 +201,49 @@
       <div>
         <div class="eyebrow">● Enrolling now · 12 spots</div>
         <h1>Algonquin<br><em>Fall Camping</em></h1>
-        <p class="lede">A beginner-friendly, two-night camping weekend at Mew Lake during peak fall colour season. No previous camping experience is required, and we can help you arrange rental gear.</p>
+        <p class="lede">A beginner-friendly, two-night camping trip at Lake of Two Rivers during peak fall colour season. No previous camping experience is required, and equipment can be rented separately.</p>
       </div>
       <aside class="hero-card" aria-label="Event details">
         <dl>
-          <div><dt>Date</dt><dd>October 2–4, 2026</dd></div>
-          <div><dt>Place</dt><dd>Mew Lake, Algonquin Provincial Park</dd></div>
+          <div><dt>Date</dt><dd>October 6–8, 2026</dd></div>
+          <div><dt>Place</dt><dd>Lake of Two Rivers, Algonquin Provincial Park</dd></div>
           <div><dt>Format</dt><dd>3 days · 2 nights · tent camping</dd></div>
           <div><dt>Group</dt><dd>Up to 12 UofT students</dd></div>
         </dl>
-        <a class="cta" href="https://docs.google.com/forms/d/e/1FAIpQLScXHlHbNJdQLQlVIEh5HpLcZY4ktfCqD3ZL-wdjUY6JTtb9UQ/viewform" target="_blank" rel="noopener">Register now →</a>
-        <p class="note">A C$50 registration deposit is required. If the trip is already full when we receive it, the deposit will be refunded.</p>
+        <a class="cta" href="https://docs.google.com/forms/d/e/1FAIpQLScWIqEE7Z-q79J23euCci1dN089FzLElAXfNOHjYAcaBREBig/viewform" target="_blank" rel="noopener">Register now →</a>
+        <p class="note">A C$50 registration deposit is required. It will be refunded if no trip space is available.</p>
       </aside>
     </header>
+
+    <section class="sessions" aria-label="Fall camping sessions">
+      <article class="session full" id="oct-2-4">
+        <div>
+          <h2>October 2–4 · Mew Lake</h2>
+          <p>The first fall camping session is now at capacity.</p>
+        </div>
+        <span class="session-status">Full</span>
+      </article>
+      <article class="session open">
+        <div>
+          <h2>October 6–8 · Lake of Two Rivers</h2>
+          <p>New session · registration is open.</p>
+        </div>
+        <span class="session-status">Enrolling now</span>
+      </article>
+    </section>
 
     <section class="facility-callout" aria-labelledby="facilities-title">
       <div>
         <div class="section-label">Campground comfort</div>
         <h2 id="facilities-title">Comfortable campground setup</h2>
-        <p>This is a designated, drive-in public campground—not remote backcountry camping. Shared drinking water, hot showers, and flush toilets are available. Electricity is available at selected sites and will be confirmed with the final campsite assignment.</p>
+        <p>This is a designated, drive-in public campground—not remote backcountry camping. Shared drinking water, hot showers, flush toilets, and laundry facilities are available. More than half of the campsites have electrical hookups; the final site assignment will confirm whether yours does.</p>
         <p class="facility-note">You’ll still sleep in a tent and bring your own sleeping gear.</p>
       </div>
       <ul class="facility-list" aria-label="Campground facilities">
         <li>Drinking water</li>
         <li>Hot showers</li>
         <li>Flush toilets</li>
-        <li>Electricity available</li>
+        <li>Laundry facilities</li>
       </ul>
     </section>
 
@@ -231,7 +267,7 @@
       <h2>What is there, and what do I bring?</h2>
       <div class="grid">
         <article class="panel">
-          <h3>Mew Lake provides</h3>
+          <h3>Lake of Two Rivers provides</h3>
           <ul>
             <li>A designated campsite and level tent area</li>
             <li>A picnic table and fire pit with a cooking grill</li>
@@ -254,7 +290,11 @@
         </article>
         <article class="panel">
           <h3>Missing something?</h3>
-          <p>You can still register. Tell us whether you need a tent, sleeping bag, sleeping pad, or another item, and we can help arrange a rental. Personal rental charges are separate from the trip price.</p>
+          <p>You can still register. Use the <a href="https://utoc.ca/gear/" target="_blank" rel="noopener"><strong>UTOC Gear Library</strong></a> to check the available tent, sleeping bag, sleeping pad, and other equipment, then book the rental yourself through that page. UTOC rentals are separate from the trip price and first-come, first-served.</p>
+        </article>
+        <article class="panel">
+          <h3>Prefer roofed accommodation?</h3>
+          <p>You may ask UTETC to try to book a yurt or cabin at nearby Mew Lake. Roofed spaces are limited and not guaranteed. If we cannot offer the accommodation you requested and you do not accept an available tent-camping place, your registration deposit will be refunded.</p>
         </article>
       </div>
     </section>
@@ -265,23 +305,24 @@
       <div class="grid pricing">
         <article class="panel price-card">
           <h3>Passenger</h3>
-          <div class="price">C$180 <small>estimated fee with your own gear</small></div>
+          <div class="price">C$190 <small>with your own gear</small></div>
           <p>For students travelling in a club-arranged carpool. This package includes the campsite, two group BBQ dinners, and carpool and trip operations.</p>
           <div class="breakdown" aria-label="Passenger price breakdown">
             <div><span>Two-night campsite allocation</span><strong>C$50</strong></div>
             <div><span>Two group BBQ dinners &amp; materials</span><strong>C$50</strong></div>
-            <div><span>Carpool, driver credit &amp; club operations</span><strong>C$80</strong></div>
+            <div><span>Carpool, driver credit &amp; club operations</span><strong>C$90</strong></div>
           </div>
-          <div class="rule"><strong>Need rental gear?</strong> A passenger needing some rental items should budget around C$220 total. A full solo tent, sleeping bag, and sleeping pad package may bring the total closer to C$240–250. We will confirm the actual quote before final payment.</div>
+          <div class="rule"><strong>UTETC member: C$170.</strong> The C$20 membership discount applies to this event fee. Personal equipment rental and roofed accommodation are separate.</div>
         </article>
         <article class="panel price-card">
           <h3>Approved volunteer driver</h3>
-          <div class="price">C$40–50 <small>estimated club fee</small></div>
-          <p>Approved drivers receive a reduced event fee in recognition of providing the vehicle and driving. Drivers pay for fuel directly, and fuel is not separately reimbursed. With an estimated C$120–150 in fuel, a driver's combined out-of-pocket cost may be about C$160–200.</p>
+          <div class="price">C$50 <small>standard driver fee</small></div>
+          <p>Approved drivers receive a reduced event fee in recognition of providing the vehicle and driving. Drivers pay for fuel directly, and fuel is not separately reimbursed. With an estimated C$120–150 in fuel, a driver's combined out-of-pocket cost may be about C$170–200.</p>
+          <div class="rule"><strong>Member driver: C$30.</strong> This is the C$20 UTETC membership discount applied to the approved driver fee.</div>
           <div class="rule"><strong>Driver status is confirmed by UTETC.</strong> Selecting “I can drive” on the form does not automatically qualify for the driver rate.</div>
         </article>
       </div>
-      <div class="rule"><strong>Deposit:</strong> everyone submits a C$50 registration deposit. For passengers it is applied to the final balance. For approved drivers it covers the estimated driver fee; any small difference will be settled after the assigned round trip is completed. If registration arrives after the trip is full, the deposit will be refunded. Part of the passenger package supports the driver fee reduction and carpool coordination; a stated contribution also supports club operations and future activities. Personal equipment rental is separate and will be confirmed before final payment.</div>
+      <div class="rule"><strong>Deposit:</strong> everyone submits a C$50 registration deposit, which is applied to the final balance. If no trip space is available, the deposit will be refunded. A Mew Lake yurt or cabin is an optional request, not a confirmed booking; if we cannot offer the requested roofed accommodation and you do not accept an available tent-camping place, the deposit will also be refunded. Personal equipment rental and roofed accommodation charges are separate.</div>
     </section>
 
     <section>
@@ -290,7 +331,7 @@
       <div class="grid">
         <article class="panel">
           <h3>The registration form asks</h3>
-          <p>Whether you are a beginner, whether you have your own gear, whether you need rental help, whether friends are joining you, and whether you can volunteer as a driver.</p>
+          <p>Whether you are a beginner, whether you have your own gear, whether you prefer tent camping or a Mew Lake yurt or cabin request, whether friends are joining you, and whether you can volunteer as a driver.</p>
         </article>
         <article class="panel">
           <h3>Before you submit</h3>
@@ -303,11 +344,11 @@
       <div>
         <div class="section-label">Registration</div>
         <h2>Ready for the weekend?</h2>
-        <p>First download, sign, and email the signed waiver to <strong>uoft.travelclub@gmail.com</strong>. Then submit the short registration form after sending the required C$50 deposit. We will email you to confirm that your request was received and follow up with your status and next steps.</p>
+        <p>First download, sign, and email the signed waiver to <strong>uoft.travelclub@gmail.com</strong>. Then submit the October 6–8 registration form after sending the required C$50 deposit. We will email you to confirm that your request was received and follow up with your trip and accommodation status.</p>
       </div>
       <div class="registration-actions">
         <a class="cta secondary" href="output/pdf/algonquin-fall-camping-waiver-2026.pdf" target="_blank" rel="noopener">Download waiver PDF ↓</a>
-        <a class="cta" href="https://docs.google.com/forms/d/e/1FAIpQLScXHlHbNJdQLQlVIEh5HpLcZY4ktfCqD3ZL-wdjUY6JTtb9UQ/viewform" target="_blank" rel="noopener">Open registration form →</a>
+        <a class="cta" href="https://docs.google.com/forms/d/e/1FAIpQLScWIqEE7Z-q79J23euCci1dN089FzLElAXfNOHjYAcaBREBig/viewform" target="_blank" rel="noopener">Open registration form →</a>
       </div>
     </section>
 
