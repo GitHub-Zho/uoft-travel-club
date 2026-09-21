@@ -149,10 +149,13 @@
       right:-70px; bottom:-90px; background:rgba(184,149,90,.11);
     }
     .price {
+      display:flex; align-items:baseline; flex-wrap:wrap; gap:8px 16px;
       margin:7px 0 12px; font-family:'Playfair Display',serif;
       font-size:2.55rem; font-weight:900; color:var(--navy);
     }
     .price small { font-family:'DM Sans',sans-serif; font-size:.72rem; font-weight:500; color:var(--muted); }
+    .member-price { color:var(--green); font-size:1.55rem; white-space:nowrap; }
+    .member-price small { color:var(--green); }
     .breakdown { display:grid; gap:8px; margin-top:16px; }
     .breakdown div { display:flex; justify-content:space-between; gap:16px; color:var(--muted); font-size:.8rem; }
     .breakdown strong { color:var(--navy); }
@@ -257,7 +260,7 @@
         </article>
         <article class="panel">
           <h3>One person, one tent — planned</h3>
-          <p>Our working plan is one participant per tent. Ontario Parks allows a maximum of six people and three tents per campsite, so we will reserve enough campsites for the final tent count.</p>
+          <p>Our working plan is one participant per tent. You may instead choose to share a tent with a friend named on the form; we will then recalculate the campsite portion you share and confirm your final total. Ontario Parks allows a maximum of six people and three tents per campsite, so we will reserve enough campsites for the final tent count.</p>
         </article>
       </div>
     </section>
@@ -305,20 +308,19 @@
       <div class="grid pricing">
         <article class="panel price-card">
           <h3>Passenger</h3>
-          <div class="price">C$190 <small>with your own gear</small></div>
+          <div class="price">C$190 <span class="member-price">C$170 <small>member</small></span></div>
           <p>For students travelling in a club-arranged carpool. This package includes the campsite, two group BBQ dinners, and carpool and trip operations.</p>
           <div class="breakdown" aria-label="Passenger price breakdown">
             <div><span>Two-night campsite allocation</span><strong>C$50</strong></div>
             <div><span>Two group BBQ dinners &amp; materials</span><strong>C$50</strong></div>
             <div><span>Carpool, driver credit &amp; club operations</span><strong>C$90</strong></div>
           </div>
-          <div class="rule"><strong>UTETC member: C$170.</strong> The C$20 membership discount applies to this event fee. Personal equipment rental and roofed accommodation are separate.</div>
+          <div class="rule">The C$20 UTETC membership discount is already reflected above. Personal equipment rental and roofed accommodation are separate.</div>
         </article>
         <article class="panel price-card">
           <h3>Approved volunteer driver</h3>
-          <div class="price">C$50 <small>standard driver fee</small></div>
+          <div class="price">C$50 <span class="member-price">C$30 <small>member</small></span></div>
           <p>Approved drivers receive a reduced event fee in recognition of providing the vehicle and driving. Drivers pay for fuel directly, and fuel is not separately reimbursed. With an estimated C$120–150 in fuel, a driver's combined out-of-pocket cost may be about C$170–200.</p>
-          <div class="rule"><strong>Member driver: C$30.</strong> This is the C$20 UTETC membership discount applied to the approved driver fee.</div>
           <div class="rule"><strong>Driver status is confirmed by UTETC.</strong> Selecting “I can drive” on the form does not automatically qualify for the driver rate.</div>
         </article>
       </div>
