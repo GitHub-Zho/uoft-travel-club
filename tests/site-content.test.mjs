@@ -12,18 +12,24 @@ assert.match(index, /Mew Lake[\s\S]*Oct 2–4, 2026[\s\S]*Trip Full/);
 assert.match(index, /href="algonquin-weekend"[^>]*class="act active"/);
 assert.match(index, /Lake of Two Rivers/);
 assert.match(index, /Oct 6–8, 2026/);
-assert.match(index, /Passenger C\$190[\s\S]*Member C\$170/);
+assert.match(index, /Passenger C\$170/);
+assert.doesNotMatch(index, /Member C\$170/i);
 assert.match(index, /Enrolling Now/);
+assert.match(index, /active members only/i);
+assert.match(index, /C\$25\/year[\s\S]*separate/i);
+assert.match(index, /first time[\s\S]*become a member/i);
 
 assert.match(event, /Beginner-friendly/i);
 assert.match(event, /October 2–4[\s\S]*Mew Lake[\s\S]*Full/i);
 assert.match(event, /October 6–8, 2026/);
 assert.match(event, /Lake of Two Rivers, Algonquin Provincial Park/);
 assert.match(event, /maximum of six people and three tents per campsite/i);
-assert.match(event, /Passenger[\s\S]*C\$190/);
-assert.match(event, /<div class="price">C\$190[\s\S]*C\$170[\s\S]*member[\s\S]*<\/div>/i);
-assert.match(event, /Approved volunteer driver[\s\S]*C\$50/);
-assert.match(event, /<div class="price">C\$50[\s\S]*C\$30[\s\S]*member[\s\S]*<\/div>/i);
+assert.match(event, /Passenger[\s\S]*<div class="price">C\$170\s*<small>trip fee<\/small><\/div>/i);
+assert.match(event, /Approved volunteer driver[\s\S]*C\$30/);
+assert.match(event, /Approved volunteer driver[\s\S]*<div class="price">C\$30\s*<small>trip fee<\/small><\/div>/i);
+assert.match(event, /Members only\. C\$25 annual membership required\./i);
+assert.match(event, /membership fee is separate/i);
+assert.match(event, /First time[\s\S]*Become a member[\s\S]*Already an active member/i);
 assert.match(event, /share a tent with a friend/i);
 assert.match(event, /fuel directly[\s\S]*not separately reimbursed/i);
 assert.match(event, /C\$50 registration deposit/);
@@ -39,11 +45,21 @@ assert.match(event, /signed waiver[^<]*uoft\.travelclub@gmail\.com/i);
 
 assert.match(linktree, /October 2–4[\s\S]*Full/i);
 assert.match(linktree, /October 6–8 Registration/);
+assert.match(linktree, /Become a Member[\s\S]*C\$25\/year/i);
+assert.match(linktree, /Members only[\s\S]*membership fee separate/i);
 assert.match(linktree, /docs\.google\.com\/forms\/d\/e\/[A-Za-z0-9_-]+\/viewform/);
 assert.match(linktree, /href="algonquin-weekend"/);
 assert.match(linktree, /output\/pdf\/algonquin-fall-camping-waiver-2026\.pdf/);
 assert.match(linktree, /Summer Exploration Trip[\s\S]*Trip ended/i);
 assert.match(linktree, /class="card ended"/);
+
+for (const page of [index, event, linktree]) {
+  assert.doesNotMatch(page, /non[- ]member/i);
+  assert.doesNotMatch(page, /membership discount/i);
+  assert.doesNotMatch(page, /member-price/i);
+  assert.doesNotMatch(page, /Member C\$/i);
+  assert.doesNotMatch(page, /C\$190/i);
+}
 
 assert.equal(waiver.subarray(0, 4).toString(), '%PDF');
 assert.ok(waiver.length > 8_000, 'waiver PDF should contain the complete multi-page agreement');
