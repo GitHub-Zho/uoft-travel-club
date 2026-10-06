@@ -20,10 +20,9 @@ assert.doesNotMatch(index, /Enrolling Now/);
 assert.match(index, /id="waivers"[\s\S]*general-club-participation-waiver\.pdf[\s\S]*trip-specific-risk-acknowledgement-template\.pdf/);
 assert.ok(index.indexOf('id="waivers"') < index.indexOf('Summer Exploration Trip 2026'));
 assert.match(index, /active members only/i);
-assert.match(index, /C\$15\/year[\s\S]*U of T students/i);
-assert.match(index, /C\$20\/year[\s\S]*students at other schools/i);
-assert.match(index, /C\$30\/year[\s\S]*(?:non-students|alumni)/i);
-assert.match(index, /membership[\s\S]*separate from trip and activity fees/i);
+assert.match(index, /Annual Membership — C\$15\/year for current U of T students; C\$25\/year for current students at other schools and non-students or alumni/i);
+assert.match(index, /annual membership fee supports club operations, programming, equipment, event administration, and future member activities/i);
+assert.match(index, /Membership is separate from trip and event fees, including any travel or accommodation costs/i);
 assert.match(index, /first time[\s\S]*become a member/i);
 
 assert.match(event, /Beginner-friendly/i);
@@ -35,10 +34,9 @@ assert.match(event, /Passenger[\s\S]*<div class="price">C\$170\s*<small>trip fee
 assert.match(event, /Approved volunteer driver[\s\S]*C\$30/);
 assert.match(event, /Approved volunteer driver[\s\S]*<div class="price">C\$30\s*<small>trip fee<\/small><\/div>/i);
 assert.match(event, /Members only\. Annual membership required\./i);
-assert.match(event, /C\$15\/year[\s\S]*U of T students/i);
-assert.match(event, /C\$20\/year[\s\S]*students at other schools/i);
-assert.match(event, /C\$30\/year[\s\S]*(?:non-students|alumni)/i);
-assert.match(event, /membership fee is separate/i);
+assert.match(event, /Annual Membership — C\$15\/year for current U of T students; C\$25\/year for other-school students and non-students or alumni/i);
+assert.match(event, /annual membership fee supports club operations, programming, equipment, event administration, and future member activities/i);
+assert.match(event, /separate from the trip fee, C\$50 registration deposit, and any travel or accommodation costs/i);
 assert.match(event, /become a member[\s\S]*future club activities/i);
 assert.match(event, /share a tent with a friend/i);
 assert.match(event, /fuel directly[\s\S]*not separately reimbursed/i);
@@ -57,7 +55,7 @@ assert.match(event, /Registration is closed for both October sessions/i);
 
 assert.match(linktree, /October 2–4[\s\S]*Registration closed/i);
 assert.match(linktree, /October 6–8[\s\S]*Registration closed/);
-assert.match(linktree, /Become a Member[\s\S]*C\$15[\s\S]*C\$20[\s\S]*C\$30/i);
+assert.match(linktree, /Annual Membership — C\$15 \/ C\$25 per year[\s\S]*Required before club activities/i);
 assert.doesNotMatch(linktree, /docs\.google\.com\/forms\/d\/e\/[A-Za-z0-9_-]+\/viewform/);
 assert.match(linktree, /href="algonquin-weekend"/);
 assert.match(linktree, /general-club-participation-waiver\.pdf/);
@@ -72,7 +70,7 @@ for (const page of [index, event, linktree]) {
   assert.doesNotMatch(page, /member-price/i);
   assert.doesNotMatch(page, /Member C\$/i);
   assert.doesNotMatch(page, /C\$190/i);
-  assert.doesNotMatch(page, /C\$25\/year/i);
+  assert.doesNotMatch(page, /C\$20\/year|C\$30\/year/i);
 }
 
 for (const pdf of [generalWaiver, tripTemplate, archivedAlgonquinWaiver]) {
