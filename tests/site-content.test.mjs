@@ -7,6 +7,7 @@ const event = await readFile(new URL('algonquin-weekend.html', root), 'utf8');
 const linktree = await readFile(new URL('linktree.html', root), 'utf8');
 const generalWaiver = await readFile(new URL('output/pdf/general-club-participation-waiver.pdf', root));
 const tripTemplate = await readFile(new URL('output/pdf/trip-specific-risk-acknowledgement-template.pdf', root));
+const archivedAlgonquinWaiver = await readFile(new URL('output/pdf/algonquin-fall-camping-waiver-2026.pdf', root));
 
 assert.match(index, /href="algonquin-weekend#oct-2-4"[^>]*class="act inactive"/);
 assert.match(index, /Mew Lake[\s\S]*Oct 2–4, 2026[\s\S]*Registration Closed/);
@@ -16,8 +17,8 @@ assert.match(index, /Oct 6–8, 2026/);
 assert.match(index, /Passenger C\$170/);
 assert.doesNotMatch(index, /Member C\$170/i);
 assert.doesNotMatch(index, /Enrolling Now/);
-assert.match(index, /general-club-participation-waiver\.pdf/);
-assert.match(index, /trip-specific-risk-acknowledgement-template\.pdf/);
+assert.match(index, /id="waivers"[\s\S]*general-club-participation-waiver\.pdf[\s\S]*trip-specific-risk-acknowledgement-template\.pdf/);
+assert.ok(index.indexOf('id="waivers"') < index.indexOf('Summer Exploration Trip 2026'));
 assert.match(index, /active members only/i);
 assert.match(index, /C\$15\/year[\s\S]*U of T students/i);
 assert.match(index, /C\$20\/year[\s\S]*students at other schools/i);
@@ -49,8 +50,9 @@ assert.match(event, /picnic table[\s\S]*fire pit[\s\S]*showers/i);
 assert.match(event, /href="https:\/\/utoc\.ca\/gear\/"/);
 assert.match(event, /book[^.]*rental[^.]*yourself/i);
 assert.doesNotMatch(event, /docs\.google\.com\/forms\/d\/e\/[A-Za-z0-9_-]+\/viewform/);
-assert.match(event, /general-club-participation-waiver\.pdf/);
-assert.match(event, /trip-specific-risk-acknowledgement-template\.pdf/);
+assert.match(event, /algonquin-fall-camping-waiver-2026\.pdf[^<]*>Archived October 2–4 waiver/);
+assert.match(event, /href="\/#waivers"/);
+assert.doesNotMatch(event, /general-club-participation-waiver\.pdf|trip-specific-risk-acknowledgement-template\.pdf/);
 assert.match(event, /Registration is closed for both October sessions/i);
 
 assert.match(linktree, /October 2–4[\s\S]*Registration closed/i);
@@ -60,6 +62,7 @@ assert.doesNotMatch(linktree, /docs\.google\.com\/forms\/d\/e\/[A-Za-z0-9_-]+\/v
 assert.match(linktree, /href="algonquin-weekend"/);
 assert.match(linktree, /general-club-participation-waiver\.pdf/);
 assert.match(linktree, /trip-specific-risk-acknowledgement-template\.pdf/);
+assert.ok(linktree.indexOf('Club Waivers') < linktree.indexOf('October 6–8 · Lake of Two Rivers'));
 assert.match(linktree, /Summer Exploration Trip[\s\S]*Trip ended/i);
 assert.match(linktree, /class="card ended"/);
 
@@ -72,11 +75,11 @@ for (const page of [index, event, linktree]) {
   assert.doesNotMatch(page, /C\$25\/year/i);
 }
 
-for (const pdf of [generalWaiver, tripTemplate]) {
+for (const pdf of [generalWaiver, tripTemplate, archivedAlgonquinWaiver]) {
   assert.equal(pdf.subarray(0, 4).toString(), '%PDF');
   assert.ok(pdf.length > 6_000, 'PDF should contain the complete multi-page document');
 }
-for (const page of [index, event, linktree]) {
+for (const page of [index, linktree]) {
   assert.doesNotMatch(page, /algonquin-fall-camping-waiver-2026\.pdf/);
 }
 
