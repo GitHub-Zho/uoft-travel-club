@@ -19,11 +19,11 @@ assert.doesNotMatch(index, /Member C\$170/i);
 assert.doesNotMatch(index, /Enrolling Now/);
 assert.match(index, /id="waivers"[\s\S]*general-club-participation-waiver\.pdf[\s\S]*trip-specific-risk-acknowledgement-template\.pdf/);
 assert.ok(index.indexOf('id="waivers"') < index.indexOf('Summer Exploration Trip 2026'));
-assert.match(index, /active members only/i);
+assert.match(index, /Membership requirements vary by activity/i);
 assert.match(index, /Annual Membership — C\$25\/year for all members/i);
 assert.match(index, /annual membership fee supports club operations, programming, equipment, event administration, and future member activities/i);
 assert.match(index, /Membership is separate from trip and event fees, including any travel or accommodation costs/i);
-assert.match(index, /first time[\s\S]*become a member/i);
+assert.match(index, /First time with UTETC\?[\s\S]*some activities welcome nonmembers/i);
 
 assert.match(event, /Beginner-friendly/i);
 assert.match(event, /October 2–4[\s\S]*Mew Lake[\s\S]*Closed/i);
