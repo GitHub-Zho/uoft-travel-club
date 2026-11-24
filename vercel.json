@@ -1,4 +1,10 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "functions": {
+    "api/quebec-register.js": {
+      "maxDuration": 25,
+      "includeFiles": "assets/quebec/pricing.mjs"
+    }
+  }
 }
