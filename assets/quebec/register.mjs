@@ -65,7 +65,8 @@ main.innerHTML = `
     <header class="form-heading">
       <p class="overline">${t(TRIP.title)}</p>
       <h1>${t(['Plan your trip', '规划你的行程'])}</h1>
-      <p>${t(['Price out the parts you want to join. Your choices carry into Google Forms when registration opens.', '选好想参加的路线，先看费用。报名开放后，这些选择会自动带入 Google 表单。'])}</p>
+      <p>${t(['Estimate the cost of the plans you want to join.', '先估算你想参加的行程费用。'])}
+        <span id="planner-form-intro" hidden>${t(['Your selections carry over to Google Forms.', '你的选择会自动带入 Google 表单。'])}</span></p>
     </header>
     <form id="trip-plan" class="form-layout">
       <div class="form-card">
@@ -192,6 +193,7 @@ function render() {
   const configured = Boolean(GOOGLE_FORM_PREFILL) && GOOGLE_FORM_OPEN && beforeCutoff;
   const ready = Boolean(plan) && (!city || Boolean(selection.city)) && (!mountain || Boolean(selection.chalet));
   button.disabled = !ready || !configured;
+  show('planner-form-intro', configured);
   const available = configured
     ? ['Your selected plan and travel choices will be filled in for you.', '所选路线和交通选项会自动带入报名表。']
     : beforeCutoff
