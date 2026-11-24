@@ -10,8 +10,8 @@ export const REGISTRATION_POLICY = {
     '请于多伦多时间 2026 年 12 月 19 日晚上 11:59 前报名。',
   ],
   deposit: [
-    'Once UTETC confirms your accommodation, send the full lodging amount by Interac e-Transfer to ' + CLUB_EMAIL + '. The deposit covers lodging only. The club fee, airfare and optional activities are separate.',
-    'UTETC 确认住宿后，请通过 Interac e-Transfer 将全额住宿费转至 ' + CLUB_EMAIL + '。定金仅包含住宿，活动费、机票和自选项目另付。',
+    'After submitting your registration, send the full cost of the lodging you selected by Interac e-Transfer to ' + CLUB_EMAIL + '. If you arrange your own lodging, there is no lodging deposit. UTETC will confirm airfare and shared rental car costs separately.',
+    '提交报名后，请通过 Interac e-Transfer 将所选住宿的全额费用转至 ' + CLUB_EMAIL + '。自行安排住宿无需付住宿定金。机票和合租车辆费用由 UTETC 后续确认。',
   ],
   refund: [
     'Request a full refund of your lodging deposit by emailing the club within 72 hours after sending your e-Transfer.',
@@ -22,8 +22,8 @@ export const REGISTRATION_POLICY = {
     '请在转账备注填写「UTETC QC27 - 法定姓名」，姓名与报名表一致。',
   ],
   paymentVerification: [
-    'If you have already paid following the club’s instructions, you can report the amount and sender’s name in the form. If you pay later, reply to the club with the same details. The club verifies receipt separately.',
-    '如已按俱乐部指引付款，可在报名表填写金额和付款人姓名。之后付款也可回复俱乐部，提供同样资料。俱乐部会另行核实到账。',
+    'After sending the deposit, reply to your registration email with the amount and the sender’s name so UTETC can match your payment. If you already sent the deposit, report that transfer once.',
+    '付定金后，请回复报名回执，注明转账金额和付款人姓名，方便 UTETC 核对到账。已转账的人只需提供该笔转账的信息。',
   ],
   flights: [
     'UTETC aims to book assisted flights by around December 20, 2026, subject to fares and availability. We’ll confirm the itinerary and fare with you before booking.',

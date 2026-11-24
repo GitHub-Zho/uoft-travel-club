@@ -52,6 +52,7 @@ function harness({ ready = true, published = false, responses = [], mismatch = f
     form['add' + method + 'Item'] = () => {
       const id = ++nextId;
       const item = { id, type, getId: () => id, getTitle: () => item.Title,
+        getType: () => type, asPageBreakItem: () => item, asTextItem: () => item,
         createChoice: (value, target) => ({ value, target }),
         createResponse: (value) => ({ id, value }),
       };
@@ -66,6 +67,7 @@ function harness({ ready = true, published = false, responses = [], mismatch = f
   const services = {
     FormApp: {
       PageNavigationType: { SUBMIT: 'SUBMIT' }, DestinationType: { SPREADSHEET: 'SPREADSHEET' },
+      ItemType: { PAGE_BREAK: 'page', TEXT: 'text' },
       create(_, visible) { assert.equal(visible, false); created++; return form; },
       openById: () => form,
       createTextValidation: () => ({
@@ -166,6 +168,27 @@ test('refuses a published, non-empty, or wrongly linked form before modifying it
   }
 });
 
+test('updates both sets of notices on the published form without changing response items or routing', () => {
+  const responses = [{ id: 'existing-response' }];
+  const { runtime, form, items, emails, triggers, sheetRows } = harness({ published: true, responses });
+  runtime.appendQuebecSections_(form, spec);
+  const signingPages = items.filter((item) => item.type === 'page' && /electronic signature|电子签署/.test(item.Title));
+  assert.equal(signingPages.length, 2);
+  for (const item of signingPages) item.setHelpText('Prior guidance');
+  const originalItems = items.map(({ id, Title, Required, GoToPage, Choices }) => [id, Title, Required, GoToPage, Choices]);
+
+  runtime.refreshQuebecRegistrationNotices();
+  runtime.refreshQuebecRegistrationNotices();
+
+  assert.match(signingPages[0].HelpText, /Sign in this form[\s\S]+After submitting your registration[\s\S]+uoft.travelclub@gmail.com/);
+  assert.match(signingPages[1].HelpText, /在本表内完成电子签署[\s\S]+提交报名后转住宿定金/);
+  assert.match(form.ConfirmationMessage, /electronic signature received[\s\S]+Interac e-Transfer/);
+  assert.deepEqual(items.map(({ id, Title, Required, GoToPage, Choices }) => [id, Title, Required, GoToPage, Choices]), originalItems);
+  assert.equal(form.getResponses(), responses);
+  assert.equal(form.isPublished(), true);
+  assert.deepEqual([emails.length, triggers.length, sheetRows.length], [0, 0, 0]);
+});
+
 test('English and Chinese each follow the correct routes for A, B and both plans', () => {
   const { runtime, items } = harness();
   const { prefill } = runtime.updateQuebecGoogleForm();
@@ -222,6 +245,9 @@ test('receipts follow the selected language and report answers without confirmin
     assert.equal(email.to, 'tester@example.invalid');
     assert.match(email.body, /2026-11-24T17:00:00/);
     assert.doesNotMatch(email.body, /original-form|original-sheet/);
+    assert.match(email.body, /general-club-participation-waiver\.pdf/);
+    assert.match(email.body, /Interac e-Transfer[^\n]*uoft\.travelclub@gmail\.com/);
+    assert.match(email.body, /C\$360.*C\$180.*C\$1,000.*C\$500/);
   }
   assert.match(emails[0].body, /72 hours/);
   assert.match(emails[0].body, /payment.*verified/i);
@@ -229,6 +255,8 @@ test('receipts follow the selected language and report answers without confirmin
   assert.doesNotMatch(emails[1].body, /Email for your answer copy/);
   assert.match(emails[1].body, /72 小时/);
   assert.match(emails[1].body, /付款.*核实/);
+  assert.match(emails[0].body, /Electronic signature[\s\S]+after submitting[\s\S]+Your answers/);
+  assert.match(emails[1].body, /电子签署[\s\S]+提交报名后转住宿定金[\s\S]+你的答复/);
 });
 
 test('a fresh setup remains unpublished and installs only the receipt and cutoff triggers', () => {

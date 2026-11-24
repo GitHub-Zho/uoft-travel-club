@@ -207,6 +207,43 @@ function closeQuebecGoogleForm() {
   if (form.isPublished()) form.setAcceptingResponses(false);
 }
 
+function refreshQuebecRegistrationNotices() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(10000)) throw new Error('Another setup run is active.');
+  try {
+    const props = PropertiesService.getScriptProperties();
+    if (props.getProperty('QUEBEC_FORM_SETUP') !== 'READY') throw new Error('The Québec form is not ready.');
+    const form = FormApp.openById(props.getProperty('QUEBEC_FORM_ID'));
+    if (!form.isPublished() || form.getDestinationId() !== props.getProperty('QUEBEC_SHEET_ID')) {
+      throw new Error('Expected the published Québec form and its original response sheet.');
+    }
+
+    const config = quebecFormSpec_();
+    const items = form.getItems();
+    const updates = Object.values(config.localized).map(({ sections }) => {
+      const section = sections.find(({ key }) => key === 'sign');
+      const pages = items.filter((item) => item.getType() === FormApp.ItemType.PAGE_BREAK && item.getTitle() === section.title);
+      if (pages.length !== 1) throw new Error('A signing section could not be identified uniquely.');
+      const fields = section.questions.filter(({ type }) => type === 'text').map((question) => {
+        const matches = items.filter((item) => item.getType() === FormApp.ItemType.TEXT && item.getTitle() === question.title);
+        if (matches.length !== 1) throw new Error('A signing or payment field could not be identified uniquely.');
+        return { item: matches[0].asTextItem(), help: question.help };
+      });
+      return { page: pages[0].asPageBreakItem(), pageHelp: section.help, fields };
+    });
+
+    // Update only guidance. Existing questions, answers and routing use the original item IDs.
+    for (const { page, pageHelp, fields } of updates) {
+      page.setHelpText(pageHelp);
+      for (const { item, help } of fields) item.setHelpText(help);
+    }
+    form.setConfirmationMessage(config.confirmation);
+    console.log('Updated the English and Chinese signing guidance and submission confirmation.');
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function sendQuebecAnswerCopy(event) {
   if (!event || !event.source || !event.response) return;
   const props = PropertiesService.getScriptProperties();
@@ -227,14 +264,15 @@ function sendQuebecAnswerCopy(event) {
   const recipient = chinese ? chineseEmail : (englishEmail || getAnswer('QUEBEC_EMAIL_ITEM_ID'));
   if (!recipient || recipient.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)) return;
 
-  const { receipt, terms } = config.localized[chinese ? 'zh' : 'en'];
+  const { receipt, otherTerms } = config.localized[chinese ? 'zh' : 'en'];
   const answers = responses.flatMap((answer) => {
     const response = answer.getResponse();
     const value = Array.isArray(response) ? response.join(', ') : response;
     if (!String(value ?? '').trim()) return [];
     return [answer.getItem().getTitle() + '\n  ' + value];
   });
-  const body = [receipt.intro, receipt.submitted + ': ' + event.response.getTimestamp().toISOString(),
-    receipt.answers, answers.join('\n\n'), receipt.terms, terms].join('\n\n');
+  const body = [receipt.intro, receipt.signing, receipt.payment,
+    receipt.submitted + ': ' + event.response.getTimestamp().toISOString(),
+    receipt.answers, answers.join('\n\n'), receipt.terms, otherTerms, receipt.risk].join('\n\n');
   MailApp.sendEmail({ to: recipient, subject: receipt.subject, body });
 }

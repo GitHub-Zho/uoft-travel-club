@@ -218,7 +218,7 @@ eventMain.innerHTML = `
       ${accordion('pricing', ['Pricing & registration', '费用与报名'], `
         <p class="panel-intro">${fees}</p>
         <p>${t([`Plan B only: budget about ${ski} per person for four days of lift tickets and ${gear} for four days of rental gear, before tax. Confirm Ikon access, tickets and equipment separately.`, `仅 B 段：四天雪票预计每人 ${ski}，四天雪具预计每人 ${gear}，均未含税。请分别核实 Ikon 权益、雪票和雪具价格。`])}</p>
-        <p class="fine">${t(['Your trip estimate helps you plan. The club will confirm any payment instructions and amount separately.', '旅行预算供你提前规划。实际应付金额和付款方式由俱乐部另行确认。'])}</p>
+        <p class="fine">${t(['Choose your stay in the trip planner to see your lodging deposit. The trip estimate includes other costs you pay separately.', '在行程规划页选择住宿即可查看应付定金。行程预估还包括需另付的其他费用。'])}</p>
         <ul class="event-registration-terms">${['deadline', 'deposit', 'refund', 'flights', 'followUp'].map(key =>
           `<li>${t(REGISTRATION_POLICY[key])}</li>`).join('')}</ul>
         ${calculatorLink()}`)}

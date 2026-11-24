@@ -11,12 +11,17 @@ The Québec form uses one club-owned draft, a private event spreadsheet and sepa
 
 Use `createQuebecGoogleForm` only when provisioning a new event draft. It creates a private response spreadsheet and installs the club’s email and automatic cutoff triggers for that draft. The scripts do not open intake or send mail during setup.
 
+## Refresh the live registration notices
+
+Build and save the generated Apps Script in the club’s existing project, then run `refreshQuebecRegistrationNotices`. It updates the existing English and Chinese signing-page descriptions, field help, and submission confirmation. It preserves question IDs, branching, responses, and sharing. Future submissions use the updated receipt text from the saved script.
+
 ## Registration and organizer review
 
 - The website can preselect language, plan, applicable pricing choices and membership claim using the real Forms entry keys returned by Apps Script. Contact details, payment details, consent and signatures are entered directly in the form.
 - Keep the public form unpublished until the club approves opening. The English website button preselects English. Google Forms requires one Next click to enter the localized sections and controls its own button language.
 - Answer copies go to the participant-entered email through the club’s Apps Script mail quota. They include the submitted answers and terms in the respondent’s selected language, with verification left to the club. Leave native Forms receipts off while the custom receipt runs.
 - The event response Sheet remains restricted. The draft update appends the approved terms to Organizer notes and preserves the response tab. Old empty questionnaire columns may remain in Google Sheets. The language and plan columns show which of the new branches generated each response.
-- Reported e-Transfer amount and sender are optional evidence for organizer review. Verify accommodation, membership and any payment separately. No deposit is due with the form.
+- Participants sign in the form and keep their emailed copy. The linked response Sheet is the club’s signing record. No additional signed PDF is required. Archive the waiver and the risk acknowledgement corresponding to each version.
+- Participants transfer the published total for their selected club lodging after submitting, then reply with the amount and sender’s name. No lodging deposit applies to self-arranged lodging. Review payments separately and confirm airfare and shared rental car costs later.
 
 Run `node --test tests/google-form.test.mjs` to check all English and Chinese plan paths, the ski equipment skip, real-entry parsing with simulated Forms, the draft update safeguards and the response email. The local tests send no email.

@@ -20,9 +20,9 @@ The program shows the actual Le Massif slopes with independent photographer cred
 
 ## Release and organizer follow-up
 
-1. Confirm exact room or bed allocations, final taxes and the lodging amount before accepting a deposit. Follow the published refund policy and contact applicants who cannot be matched.
+1. Participants send the published amount for their selected lodging after registering. Check room or bed allocations and match the transfer to the registration before confirming a booking. Follow the published refund policy and contact applicants who cannot be matched.
 2. Keep the organizer spreadsheet and Form editor restricted. Check the public respondent link and handoff when opening the club-owned Form. Verify actual response and email delivery only with an organizer-authorized test. [Integration instructions](google-form.md)
-3. Keep payments and confirmed bookings closed until allocations, terms and any amount due are approved. Manual membership and receipt verification are separate organizer tasks. The Google Form accepts optional transfer information for later verification.
+3. Keep membership and payment verification separate. Participants can reply to their registration receipt with the amount and sender's name, or report an earlier transfer in the form. Confirm airfare and shared rental car costs separately.
 4. The wooden sledding budget uses the operator's CAD $69 daytime rate, with CAD $6 helmet rental listed separately. The Les Secrets Nordiques DUO budget uses CAD $181 per adult before tax for the proposed January 4 outing, including the online fee. The operator’s January 2–3 holiday rate is CAD $201 per adult before tax. Times and availability are pending. [Le Massif sledding](https://www.lemassif.com/en/activities-events/charlevoix-attractions/sledding) · [Les Secrets Nordiques rates](https://secretsnordiques.com/?lang=en)
 
 The English and Chinese branches both support Plan A only, Plan B only and both plans. Each selected plan can use club lodging or independently arranged lodging. The website has one estimator and passes its non-personal choices to the matching Google Forms route when enabled.

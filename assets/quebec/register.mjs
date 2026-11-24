@@ -1,6 +1,6 @@
 import { ACTIVITY_IDS, MEMBER_DISCOUNT, OPTIONS, PLANS, STAYS, calculatePricing, stayTotal } from './pricing.mjs';
 import { TRIP, EXPERIENCES } from './content.mjs';
-import { REGISTRATION_CLOSES_AT, REGISTRATION_POLICY, TRANSFER_REFERENCE, WAIVER_PATH } from './registration-policy.mjs';
+import { CLUB_EMAIL, REGISTRATION_CLOSES_AT, REGISTRATION_POLICY, TRANSFER_REFERENCE, WAIVER_PATH } from './registration-policy.mjs';
 import { GOOGLE_FORM_OPEN, GOOGLE_FORM_PREFILL } from './form-links.mjs';
 import { prefilledRegistrationUrl } from './registration-handoff.mjs';
 import { EVENT_URL, escapeHtml, language, local as t, money, range, renderChrome } from './view.mjs';
@@ -204,10 +204,10 @@ function render() {
   const dates = document.querySelector('#flight-dates');
   dates.innerHTML = plan ? t(travelDates[plan]) + (plan === 'both' ? ` <strong>${t(estimate('flight'))}</strong>` : '') : '';
   show('sharing-note', selection.city === 'shared' || selection.chalet === 'shared');
-  renderCosts(quote, ready);
+  renderCosts(quote, ready, configured);
 }
 
-function renderCosts(quote, ready) {
+function renderCosts(quote, ready, registrationOpen) {
   const line = (label, value, className = '') => `<div class="${className}"><dt>${t(label)}</dt><dd>${value}</dd></div>`;
   const names = {
     flight: ['Flights', '机票'], car: ['Shared car', '合租车辆'],
@@ -219,6 +219,12 @@ function renderCosts(quote, ready) {
     optional.push(line(names[id], `<small>${t(message)}</small>`));
   }
   const arranged = t(['Self-arranged', '自行安排']);
+  const depositNote = quote.lodging.total
+    ? t([
+      'Submit the form first, then send this amount by Interac e-Transfer to ' + CLUB_EMAIL + '.',
+      '请先提交报名表，再通过 Interac 电子转账将以上金额转至 ' + CLUB_EMAIL + '。',
+    ])
+    : t(['No transfer is needed for self-arranged lodging.', '自行安排住宿无需转账。']);
   const stayA = quote.selected.city !== 'none'
     ? line(['Plan A lodging', 'A 段住宿'], quote.lodging.city ? money(quote.lodging.city) : ready ? arranged : '—') : '';
   const stayB = quote.selected.chalet !== 'none'
@@ -233,9 +239,9 @@ function renderCosts(quote, ready) {
     ${optional.length ? `<dl class="cost-lines optional-lines">${optional.join('')}</dl>` : ''}
     <dl class="cost-lines">
       ${line(['Estimated trip cost', '预估行程费用'], ready ? range(quote.estimatedTotal.min, quote.estimatedTotal.max) : '—', 'cost-estimate')}
-      ${line(['Deposit after accommodation confirmation', '确认住宿后应付定金'], ready ? money(quote.lodging.total) : '—', 'cost-total')}
-      ${line(['Due now', '当前应付'], money(quote.amountDueNow), 'cost-due')}
-    </dl>` : `<p class="fine">${t(['Start by choosing Plan A, Plan B, or both.', '先选 A 段、B 段，或全程。'])}</p>`;
+      ${line(['Lodging deposit after submitting', '提交报名后应付住宿定金'], ready ? money(quote.lodging.total) : '—', 'cost-due')}
+    </dl>
+    ${ready && registrationOpen ? '<p class="fine planner-note">' + depositNote + '</p>' : ''}` : `<p class="fine">${t(['Start by choosing Plan A, Plan B, or both.', '先选 A 段、B 段，或全程。'])}</p>`;
 }
 
 form.addEventListener('change', render);

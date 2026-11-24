@@ -33,13 +33,20 @@ function localizedForm(language) {
     'The club fee is ' + oneTimeFee + ' per person, once per trip. Verified UTETC members save ' + discount + '.',
     '活动费每人 ' + oneTimeFee + '，全程只收一次。经核实的 UTETC 会员减免 ' + discount + '。',
   );
-  const pending = words(
-    'Nothing is due when you submit this form. If you arrange your own lodging, no lodging deposit is due.',
-    '提交本表时无需付款。自行安排住宿的部分无需支付住宿定金。',
+  const signing = words(
+    'Read the waiver and trip risk acknowledgement below, check the agreement, then type your full legal name. That completes the club’s signing step. You do not need to sign, upload, or email a separate PDF.',
+    '请阅读下方的免责声明和行程风险确认，勾选同意，再输入完整法定姓名。这样就完成本次俱乐部的签署步骤，无需另签、上传或邮件发送 PDF。',
   );
+  const signingHeading = words('1. Sign in this form', '1. 在本表内完成电子签署');
+  const paymentHeading = words('Send your lodging deposit after submitting', '提交报名后转住宿定金');
+  const depositAmounts = words(
+    `Per person: Québec City ${cash(stayTotal('city', 'own'))} own bed / ${cash(stayTotal('city', 'shared'))} shared bed. Le Massif chalet ${cash(stayTotal('chalet', 'own'))} own bed / ${cash(stayTotal('chalet', 'shared'))} shared bed. Add the amounts if you selected lodging for both stays.`,
+    `每人定金：魁北克城独享床 ${cash(stayTotal('city', 'own'))}／合用床 ${cash(stayTotal('city', 'shared'))}。Le Massif 木屋独享床 ${cash(stayTotal('chalet', 'own'))}／合用床 ${cash(stayTotal('chalet', 'shared'))}。如两段都选了住宿，请将两段金额相加。`,
+  );
+  const payment = [translate(policy.deposit), depositAmounts, lines(policy.transferMessage, policy.paymentVerification)].join('\n');
+  const otherTerms = [fees, lines(policy.refund, policy.followUp)].join('\n\n');
   const terms = [
-    pending, fees,
-    lines(policy.deposit, policy.transferMessage, policy.refund, policy.paymentVerification, policy.followUp),
+    payment, otherTerms,
   ].join('\n\n');
 
   function lodging(segment, key) {
@@ -76,14 +83,20 @@ function localizedForm(language) {
       'We received your answers. Membership and any accommodation or payment still need to be verified. For corrections, email ' + CLUB_EMAIL + '.',
       '我们已收到你的答复。会员资格，以及适用的住宿与付款资料，仍待核实。如需更正，请联系 ' + CLUB_EMAIL + '。',
     ),
+    signing: words(
+      'Electronic signature\nYour signature is saved with this response. You do not need to submit a separate signed PDF. Keep this email for your records.\n' + policy.waiverVersion + '\n' + WAIVER_URL + '\n' + policy.riskVersion,
+      '电子签署\n你的签名已随答卷保存，无需另交签名 PDF。请留存这封回执。\nUTETC 一般活动免责声明 v1.0\n' + WAIVER_URL + '\n魁北克跨年之旅行程风险确认 v1.0',
+    ),
+    payment: paymentHeading + '\n' + payment,
     subject: words('UTETC Québec 2027 · Your registration answers', 'UTETC 魁北克跨年之旅 · 你的报名答复'),
     submitted: words('Submitted', '提交时间'),
     answers: words('Your answers', '你的答复'),
-    terms: words('Registration and payment terms', '报名及付款条款'),
+    terms: words('Fees, refunds and follow-up', '费用、退款及后续联系'),
+    risk: translate(policy.risk),
   };
 
   return {
-    terms, receipt,
+    terms, otherTerms, receipt,
     sections: [
       section('contact', words('Your plan and contact details', '行程与联系方式'), [
         radio('plan', words('Which plan are you joining?', '你参加哪个行程？'), planOptions, {
@@ -142,17 +155,21 @@ function localizedForm(language) {
         }, { help: words('Estimated four-day rental: ' + gearBudget + '/person.', '四天雪具租赁参考预算 ' + gearBudget + '/人。') }),
       ], 'sign'),
       section('sign', words('Payment and electronic signature', '付款与电子签署'), [
-        text('transferAmount', words('Amount already sent by e-Transfer (CAD)', '已转账金额（CAD）'), { required: false, validation: 'positive' }),
-        text('transferPayer', words('Sender’s name as shown on the e-Transfer', '转账显示的付款人姓名'), { required: false }),
+        text('transferAmount', words('Amount already sent by e-Transfer (CAD)', '已转账金额（CAD）'), {
+          required: false, validation: 'positive', help: words('Leave blank if you will pay after submitting.', '提交后再转账的人请留空。'),
+        }),
+        text('transferPayer', words('Sender’s name as shown on the e-Transfer', '转账显示的付款人姓名'), {
+          required: false, help: words('Leave blank if you have not sent a transfer.', '尚未转账的人请留空。'),
+        }),
         note(words(policy.waiverVersion, 'UTETC 一般活动免责声明 v1.0'),
           WAIVER_URL + '\n' + words('Read the entire waiver. Section 5 includes a release for ordinary negligence within the limits of applicable law.',
             '请阅读免责声明全文。第 5 节包含在适用法律允许范围内对普通过失的责任免除。')),
         note(words(policy.riskVersion, '魁北克跨年之旅行程风险确认 v1.0'), translate(policy.risk)),
         { type: 'checkbox', key: 'consent', title: words('Adult consent', '成人确认'), options: [translate(policy.adultConsent)], required: true },
         text('signature', words('Electronic signature · full legal name', '电子签名 · 完整法定姓名'), {
-          validation: 'signature', help: words('Type your own legal name to sign both documents.', '请填写本人的完整法定姓名，签署上述两份文件。'),
+          validation: 'signature', help: words('Type your own legal name to sign both documents here. Keep the email copy after submitting.', '请在此输入本人的完整法定姓名，签署上述两份文件。提交后请留存邮件副本。'),
         }),
-      ], 'submit', terms),
+      ], 'submit', [signingHeading + '\n' + signing, '2. ' + paymentHeading + '\n' + payment, otherTerms].join('\n\n')),
     ],
   };
 }
@@ -163,7 +180,10 @@ export function createGoogleFormSpec() {
     title: 'UTETC · Québec New Year Escape 2027',
     description: 'Dec 30, 2026 – Jan 6, 2027',
     language: radio('language', 'Language / 语言', languageOptions, { branches: { en: 'contact', zh: 'contact' } }),
-    confirmation: 'Answer copy sent to your submitted email after processing. / 处理后会将答复副本发至你填写的邮箱。',
+    confirmation: [
+      'Registration and electronic signature received. Keep your email copy. If you selected club lodging, send the lodging amount by Interac e-Transfer to ' + CLUB_EMAIL + '. See your email for the amounts and transfer reference.',
+      '已收到报名答复和电子签名，请留存邮件副本。如选择俱乐部住宿，请通过 Interac e-Transfer 将所选住宿定金转至 ' + CLUB_EMAIL + '。金额和转账备注见邮件回执。',
+    ].join('\n\n'),
     closesAt: REGISTRATION_CLOSES_AT,
     localized,
     metadata: [
