@@ -197,7 +197,7 @@ test('updates both sets of notices on the published form without changing respon
 
   assert.match(signingPages[0].HelpText, /Sign in this form[\s\S]+After submitting your registration[\s\S]+uoft.travelclub@gmail.com/);
   assert.match(signingPages[1].HelpText, /在本表内完成电子签署[\s\S]+提交报名后转住宿定金/);
-  assert.match(signingPages[0].HelpText, /C\$360.*C\$180.*C\$520.*C\$260/);
+  assert.match(signingPages[0].HelpText, /C\$360.*C\$180.*C\$640.*C\$480.*C\$320/);
   assert.match(form.ConfirmationMessage, /electronic signature received[\s\S]+Interac e-Transfer/);
   assert.deepEqual(items.map(({ id, Title, Required, GoToPage, Choices }) => [id, Title, Required, GoToPage, Choices]), originalItems);
   assert.equal(form.getResponses(), responses);
@@ -205,20 +205,21 @@ test('updates both sets of notices on the published form without changing respon
   assert.deepEqual([emails.length, triggers.length, sheetRows.length], [0, 0, 0]);
 });
 
-test('live pricing changes only the original chalet choices and archives the previous labels on the first run', () => {
-  const responses = [{ id: 'existing-response', value: 'previous rate' }];
+test('live pricing adds the bunk option in place and archives the previous three choices once', () => {
+  const responses = [{ id: 'existing-response', value: 'Shared queen bed · C$65/person/night × 4 = C$260/person' }];
   const { runtime, form, props, items, logs, emails, triggers, sheetRows } = harness({ published: true, responses });
   const { prefill } = runtime.appendQuebecSections_(form, spec);
   const findByEntry = (entry) => items.find(({ id }) => id + 1000 === Number(entry.slice(6)));
   const oldOptions = {
-    en: ['Own queen bed · C$250/person/night × 4 = C$1,000/person', 'Shared queen bed · C$125/person/night × 4 = C$500/person'],
-    zh: ['独享 Queen 床 · C$250/人/晚 × 4晚 = C$1,000/人', '两人合用 Queen 床 · C$125/人/晚 × 4晚 = C$500/人'],
+    en: ['Own queen bed · C$130/person/night × 4 = C$520/person', 'Shared queen bed · C$65/person/night × 4 = C$260/person'],
+    zh: ['独享 Queen 床 · C$130/人/晚 × 4晚 = C$520/人', '两人合用 Queen 床 · C$65/人/晚 × 4晚 = C$260/人'],
   };
   sheetRows.push(['Pricing version / 价格版本', 'previous-pricing']);
   for (const language of ['en', 'zh']) {
     const before = structuredClone(prefill[language]);
+    delete before.chalet.values.bunk;
     [before.chalet.values.own, before.chalet.values.shared] = oldOptions[language];
-    findByEntry(before.chalet.entry).setChoiceValues(Object.values(before.chalet.values));
+    findByEntry(before.chalet.entry).setChoiceValues(Object.values(before.chalet.values)).setHelpText('previous lodging help');
     findByEntry(before.equipment.entry).setHelpText('previous gear help');
     props.set('QUEBEC_PREFILL_' + language.toUpperCase(), JSON.stringify(before));
   }
@@ -231,6 +232,8 @@ test('live pricing changes only the original chalet choices and archives the pre
     assert.deepEqual(after, JSON.parse(JSON.stringify(prefill[language])));
     assert.deepEqual(after.chalet.values, GOOGLE_FORM_PREFILL[language].chalet.values);
     assert.deepEqual([...findByEntry(after.chalet.entry).ChoiceValues], Object.values(after.chalet.values));
+    assert.match(after.chalet.values.bunk, /120.*480/);
+    assert.match(findByEntry(after.chalet.entry).HelpText, /subject to availability|以实际可用房间和床位为准/);
     assert.match(findByEntry(after.equipment.entry).HelpText, /C\$130.*C\$175/);
   }
   assert.deepEqual(items.map(({ id, Title, Required, GoToPage, Choices }) => [id, Title, Required, GoToPage, Choices]), originalItems);
@@ -238,10 +241,14 @@ test('live pricing changes only the original chalet choices and archives the pre
   const archive = JSON.parse(sheetRows[1][1]);
   assert.equal(archive.previousVersion, 'previous-pricing');
   assert.equal(archive.labels.en.priorLodging.own, oldOptions.en[0]);
+  assert.equal(Object.hasOwn(archive.labels.en.priorLodging, 'bunk'), false);
+  assert.match(archive.labels.en.nextLodging.bunk, /120.*480/);
+  assert.equal(archive.labels.en.priorLodgingHelp, 'previous lodging help');
   assert.equal(archive.labels.zh.priorGearHelp, 'previous gear help');
   assert.match(archive.appliedAt, /^2026-/);
   assert.ok(logs.some((line) => line.startsWith('QUEBEC_PRICING_REFRESH ')));
   assert.equal(form.getResponses(), responses);
+  assert.match(responses[0].value, /C\$260\/person/);
   assert.equal(form.isPublished(), true);
   assert.deepEqual([emails.length, triggers.length], [0, 0]);
 });
@@ -270,11 +277,12 @@ test('English and Chinese each follow the correct routes for A, B and both plans
     assert.ok(seen('b', 'assist').includes(lookup(equipment.entry)));
     assert.ok(seen('both', 'ikon').includes(lookup(equipment.entry)));
     assert.equal(Object.keys(cityA.values).join(','), 'own,shared,self');
-    assert.equal(Object.keys(chalet.values).join(','), 'own,shared,self');
+    assert.equal(Object.keys(chalet.values).join(','), 'own,bunk,shared,self');
     assert.match(cityA.values.own, /120.*360/);
     assert.match(cityA.values.shared, /60.*180/);
-    assert.match(chalet.values.own, /130.*520/);
-    assert.match(chalet.values.shared, /65.*260/);
+    assert.match(chalet.values.own, /160.*640/);
+    assert.match(chalet.values.bunk, /120.*480/);
+    assert.match(chalet.values.shared, /80.*320/);
     assert.match(lookup(equipment.entry).HelpText, /C\$130.*C\$175/);
   }
 });
@@ -292,7 +300,7 @@ test('receipts follow the selected language and report answers without confirmin
     const otherLanguage = language === 'en' ? 'ZH' : 'EN';
     const otherEmail = props.get('QUEBEC_EMAIL_ITEM_ID_' + otherLanguage);
     const lodgingId = String(Number(prefill[language].chalet.entry.slice(6)) - 1000);
-    const lodging = language === 'en' ? prefill.en.chalet.values.shared : '独享 Queen 床 · C$250/人/晚 × 4晚 = C$1,000/人';
+    const lodging = language === 'en' ? prefill.en.chalet.values.bunk : '独享 Queen 床 · C$250/人/晚 × 4晚 = C$1,000/人';
     const response = {
       getItemResponses: () => [answer(otherEmail, ''), answer(emailId, 'tester@example.invalid'), answer(lodgingId, lodging)],
       getTimestamp: () => new Date('2026-11-24T17:00:00Z'),
@@ -318,9 +326,9 @@ test('receipts follow the selected language and report answers without confirmin
   assert.match(emails[1].body, /电子签署[\s\S]+提交报名后转住宿定金[\s\S]+你的答复/);
   assert.match(emails[0].body, /Use the lodging totals in your answers below/);
   assert.match(emails[1].body, /请按下方答卷所列的住宿金额转账/);
-  assert.match(emails[0].body, /C\$260\/person/);
+  assert.match(emails[0].body, /C\$480\/person/);
   assert.match(emails[1].body, /C\$1,000\/人/);
-  assert.doesNotMatch(emails[1].body, /C\$520/);
+  assert.doesNotMatch(emails[1].body, /C\$640|C\$480|C\$320/);
 });
 
 test('a fresh setup remains unpublished and installs only the receipt and cutoff triggers', () => {

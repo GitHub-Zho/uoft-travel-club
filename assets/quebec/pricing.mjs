@@ -1,4 +1,4 @@
-export const PRICING_VERSION = '2026-11-24.1';
+export const PRICING_VERSION = '2026-11-24.2';
 export const CURRENCY = 'CAD';
 export const ACTIVITY_FEE = 80;
 export const MEMBER_DISCOUNT = 30;
@@ -10,7 +10,7 @@ export const PLANS = Object.freeze({ a: ['city'], b: ['chalet'], both: ['city', 
 
 export const STAYS = {
   city: { nights: 3, nightly: { own: 120, shared: 60 }, dates: ['2026-12-30', '2027-01-02'] },
-  chalet: { nights: 4, nightly: { own: 130, shared: 65 }, dates: ['2027-01-02', '2027-01-06'] },
+  chalet: { nights: 4, nightly: { own: 160, bunk: 120, shared: 80 }, dates: ['2027-01-02', '2027-01-06'] },
 };
 
 export const GEAR_RENTAL = {
@@ -50,16 +50,16 @@ export function stayTotal(segment, bed) {
 }
 
 export function normalizeSelection(selection = {}) {
-  // Older interest records expressed attendance through the two paid bed choices.
-  const legacyCity = ['own', 'shared'].includes(selection.city);
-  const legacyChalet = ['own', 'shared'].includes(selection.chalet);
-  const legacyPlan = legacyCity && legacyChalet ? 'both' : legacyCity ? 'a' : legacyChalet ? 'b' : '';
+  // Older interest records inferred attendance from the paid beds selected.
+  const cityBed = Object.hasOwn(STAYS.city.nightly, selection.city);
+  const chaletBed = Object.hasOwn(STAYS.chalet.nightly, selection.chalet);
+  const legacyPlan = cityBed && chaletBed ? 'both' : cityBed ? 'a' : chaletBed ? 'b' : '';
   const plan = Object.hasOwn(PLANS, selection.plan) ? selection.plan : legacyPlan;
   const segments = PLANS[plan] ?? [];
   const hasCity = segments.includes('city');
   const hasMountain = segments.includes('chalet');
-  const city = hasCity ? (legacyCity ? selection.city : 'self') : 'none';
-  const chalet = hasMountain ? (legacyChalet ? selection.chalet : 'self') : 'none';
+  const city = hasCity ? (cityBed ? selection.city : 'self') : 'none';
+  const chalet = hasMountain ? (chaletBed ? selection.chalet : 'self') : 'none';
   const lift = hasMountain ? (selection.lift ?? 'none') : 'none';
   const activities = Array.isArray(selection.activities) ? selection.activities : [];
   return {

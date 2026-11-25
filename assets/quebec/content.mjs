@@ -128,6 +128,11 @@ export const LODGING = {
     highlights: [['Chalet style', '木屋风格'], ['Shared gathering space', '公共活动空间'], ['Kitchen & BBQ preferred', '优先考虑厨房和 BBQ']],
     photoNote: ['Reference photos show the chalet style we’re looking for.', '图片仅供参考，展示我们在寻找的木屋风格。'],
     copy: ['We’re looking for a wood-style chalet with a common area for the group. We’re aiming for a kitchen and BBQ, subject to the selected property and its winter rules.', '我们计划选一间带公共活动空间的木屋风格民宿，方便大家一起吃饭聊天。预计会考虑带厨房和 BBQ 的房源，具体以选定房源及冬季使用规定为准。'],
-    inventory: ['The property, amenities and bed layout are pending confirmation.', '实际房源、设施和床位安排待确认。'],
+    inventory: ['The property, amenities and final bed assignments are pending confirmation.', '实际房源、设施和最终床位分配待确认。'],
+    beds: {
+      own: ['Private room with own queen bed', '独立房间 · 独享 Queen 床'],
+      bunk: ['One double-size bunk bed spot', '双人尺寸上下铺 · 单人床位'],
+      shared: ['Shared queen bed', '两人合用 Queen 床'],
+    },
   },
 };

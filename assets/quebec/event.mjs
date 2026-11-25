@@ -134,7 +134,7 @@ function optionalExperiences() {
 
 function stayCard([key, stay]) {
   const info = LODGING[key];
-  const labels = { own: ['Own Queen Bed', '独享 Queen 床'], shared: ['Shared Queen Bed', '共享 Queen 床'] };
+  const labels = info.beds ?? { own: ['Own Queen Bed', '独享 Queen 床'], shared: ['Shared Queen Bed', '共享 Queen 床'] };
   return `<article class="stay-card">
     <header class="stay-header">
       <p class="part-dates">${t(info.area)} · ${t(TRIP.parts[key].dates)}</p>
@@ -147,10 +147,10 @@ function stayCard([key, stay]) {
     </div>
     <div class="stay-content">
       <p>${t(info.copy)}</p><p class="fine">${t(info.inventory)}</p>
-      <dl class="stay-prices">${Object.keys(labels).map((bed) => {
+      <dl class="stay-prices">${Object.entries(labels).map(([bed, label]) => {
       const nightly = money(stay.nightly[bed]);
       const total = money(stayTotal(key, bed));
-      return `<div><dt>${t(labels[bed])}<small>${t([
+      return `<div><dt>${t(label)}<small>${t([
         `${nightly} / person / night × ${stay.nights} nights`,
         `每人每晚 ${nightly} × ${stay.nights} 晚`,
       ])}</small></dt><dd><strong>${total}</strong><small>${t(['CAD / person', '加元 / 人'])}</small></dd></div>`;
@@ -215,7 +215,7 @@ eventMain.innerHTML = `
     <div class="accordion">
       ${accordion('lodging', ['Where we’re staying', '住宿安排'], `
         <div class="info-grid">${Object.entries(STAYS).map(stayCard).join('')}</div>
-        <p class="panel-note">${t(['Club lodging is optional for both plans. Prices are provisional and per person. Shared beds require mutual consent and same-gender matching. A queen bed to yourself does not guarantee a private bedroom. The club will contact you if there is no compatible match.', '两段都可自行安排住宿。以上为每人暂定价格。两人同床需双方同意并同性别配对。单人单床不保证独立卧室。如无法配对，俱乐部会联系你确认其他选项。'])}</p>`, { subtitle: ['Hotel & chalet photos, beds and rates', '酒店与木屋照片、床位和价格'] })}
+        <p class="panel-note">${t(['Club lodging is optional for both plans. Prices are provisional and per person. Shared beds require mutual consent and same-gender matching. In the Plan A hotel, a queen bed to yourself does not guarantee a private bedroom. The club will contact you if there is no compatible match.', '两段都可自行安排住宿。以上为每人暂定价格。两人同床需双方同意并同性别配对。仅 A 段酒店的独享 Queen 床不保证独立卧室。如无法配对，俱乐部会联系你确认其他选项。'])}</p>`, { subtitle: ['Hotel & chalet photos, beds and rates', '酒店与木屋照片、床位和价格'] })}
       ${accordion('transport', ['Flights & local transportation', '航班与当地交通'], transportation())}
       ${accordion('pricing', ['Pricing & registration', '费用与报名'], `
         <p class="panel-intro">${fees}</p>

@@ -40,8 +40,8 @@ function localizedForm(language) {
   const signingHeading = words('1. Sign in this form', '1. 在本表内完成电子签署');
   const paymentHeading = words('Send your lodging deposit after submitting', '提交报名后转住宿定金');
   const depositAmounts = words(
-    `Per person: Québec City ${cash(stayTotal('city', 'own'))} own bed / ${cash(stayTotal('city', 'shared'))} shared bed. Le Massif chalet ${cash(stayTotal('chalet', 'own'))} own bed / ${cash(stayTotal('chalet', 'shared'))} shared bed. Add the amounts if you selected lodging for both stays.`,
-    `每人定金：魁北克城独享床 ${cash(stayTotal('city', 'own'))}／合用床 ${cash(stayTotal('city', 'shared'))}。Le Massif 木屋独享床 ${cash(stayTotal('chalet', 'own'))}／合用床 ${cash(stayTotal('chalet', 'shared'))}。如两段都选了住宿，请将两段金额相加。`,
+    `Per person: Québec City ${cash(stayTotal('city', 'own'))} own bed / ${cash(stayTotal('city', 'shared'))} shared bed. Le Massif chalet ${cash(stayTotal('chalet', 'own'))} private queen room / ${cash(stayTotal('chalet', 'bunk'))} double-size bunk bed spot / ${cash(stayTotal('chalet', 'shared'))} shared queen bed. Add the amounts if you selected lodging for both stays.`,
+    `每人定金：魁北克城独享床 ${cash(stayTotal('city', 'own'))}／合用床 ${cash(stayTotal('city', 'shared'))}。Le Massif 木屋独立 Queen 床房间 ${cash(stayTotal('chalet', 'own'))}／双人尺寸上下铺单人床位 ${cash(stayTotal('chalet', 'bunk'))}／合用 Queen 床 ${cash(stayTotal('chalet', 'shared'))}。如两段都选了住宿，请将两段金额相加。`,
   );
   const depositInstructions = lines(policy.transferMessage, policy.paymentVerification);
   const payment = [translate(policy.deposit), depositAmounts, depositInstructions].join('\n');
@@ -52,20 +52,30 @@ function localizedForm(language) {
 
   function lodging(segment, key) {
     const stay = STAYS[segment];
-    const stayLabel = segment === 'city' ? 'A' : 'B';
+    const city = segment === 'city';
+    const stayLabel = city ? 'A' : 'B';
     const roomText = (bed) => {
       const nightly = cash(stay.nightly[bed]);
       const total = cash(stayTotal(segment, bed));
       return words(nightly + '/person/night × ' + stay.nights + ' = ' + total + '/person',
         nightly + '/人/晚 × ' + stay.nights + '晚 = ' + total + '/人');
     };
+    const own = city ? words('Own queen bed', '独享 Queen 床')
+      : words('Private room with own queen bed', '独立房间（独享 Queen 床）');
+    const options = { own: own + ' · ' + roomText('own') };
+    if (!city) {
+      options.bunk = words('One double-size bunk bed spot', '双人尺寸上下铺床位（单人）') + ' · ' + roomText('bunk');
+    }
     return radio(key, words('Plan ' + stayLabel + ' lodging', 'Plan ' + stayLabel + ' 住宿'), {
-      own: words('Own queen bed', '独享 Queen 床') + ' · ' + roomText('own'),
+      ...options,
       shared: words('Shared queen bed', '两人合用 Queen 床') + ' · ' + roomText('shared'),
       self: words('No accommodation needed', '不需要住宿'),
     }, {
-      help: words('An own bed may be in a shared room. Shared beds require a same-gender match and mutual consent.',
-        '独享床位仍可能与他人同房。合用床位须同性配对且双方同意。'),
+      help: city
+        ? words('An own bed may be in a shared room. Shared beds require a same-gender match and mutual consent.',
+          '独享床位仍可能与他人同房。合用床位须同性配对且双方同意。')
+        : words('All room and bed choices are subject to availability. Shared queen beds require a same-gender match and mutual consent.',
+          '所有房型与床位选择均以实际可用房间和床位为准。合用 Queen 床须同性配对且双方同意。'),
     });
   }
 

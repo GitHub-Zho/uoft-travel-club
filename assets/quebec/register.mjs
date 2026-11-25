@@ -1,5 +1,5 @@
 import { ACTIVITY_IDS, GEAR_RENTAL, MEMBER_DISCOUNT, OPTIONS, PLANS, STAYS, calculatePricing, stayTotal } from './pricing.mjs';
-import { TRIP, EXPERIENCES } from './content.mjs';
+import { TRIP, EXPERIENCES, LODGING } from './content.mjs';
 import { CLUB_EMAIL, REGISTRATION_CLOSES_AT, REGISTRATION_POLICY, TRANSFER_REFERENCE, WAIVER_PATH } from './registration-policy.mjs';
 import { GOOGLE_FORM_OPEN, GOOGLE_FORM_PREFILL } from './form-links.mjs';
 import { prefilledRegistrationUrl } from './registration-handoff.mjs';
@@ -19,7 +19,6 @@ const travelDates = {
 const bedLabels = {
   own: ['Own queen bed', '单人单床'],
   shared: ['Shared queen bed', '双人同床'],
-  self: ['I’m arranging my own stay', '自行安排住宿'],
 };
 const fee = (id) => range(OPTIONS[id].min, OPTIONS[id].max);
 const estimate = (id) => [`${fee(id)} estimated`, `${fee(id)} 参考价`];
@@ -40,13 +39,15 @@ function group(name, label, options, { selected, id, hint } = {}) {
 
 function stay(segment, label) {
   const config = STAYS[segment];
-  const beds = ['own', 'shared'].map((bed) => {
+  const lodging = LODGING[segment];
+  const beds = Object.entries(lodging.beds ?? bedLabels).map(([bed, label]) => {
     const nightly = money(config.nightly[bed]);
     const total = money(stayTotal(segment, bed));
-    return [bed, bedLabels[bed], [`${nightly}/person/night × ${config.nights} = ${total}`, `每人每晚 ${nightly} × ${config.nights} 晚 = ${total}`]];
+    return [bed, label, [`${nightly}/person/night × ${config.nights} = ${total}`, `每人每晚 ${nightly} × ${config.nights} 晚 = ${total}`]];
   });
-  beds.push(['self', bedLabels.self, ['Outside this estimate', '费用不计入本预估']]);
-  return group(segment, label, beds, { id: segment + '-stay' });
+  beds.push(['self', ['I’m arranging my own stay', '自行安排住宿'], ['Outside this estimate', '费用不计入本预估']]);
+  const hint = segment === 'chalet' ? `<p class="field-hint">${t(lodging.inventory)}</p>` : '';
+  return group(segment, label, beds, { id: segment + '-stay', hint });
 }
 
 const policy = REGISTRATION_POLICY;

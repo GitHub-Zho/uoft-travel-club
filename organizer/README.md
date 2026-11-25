@@ -19,7 +19,7 @@ The event form sends interest registrations to the club's private Google Sheet t
 
 - Use the registration ID to contact the applicant and resolve the quote. Preserve the original submitted preferences and intake prices. Use the review columns to capture the approved quote and any change agreed with the applicant.
 - Verify membership from the club roster and separately record the verification reference. The amount in **Member discount if verified (CAD)** applies only after verification. A claimed membership never applies the discount at intake.
-- Check the selected property's room and bed inventory and record the specific bed allocation. Own queen uses a whole queen bed. Shared queen requires an eligible same-gender match and consent from both people. The Plan B chalet and its bed layout are pending. Any sleeper sofa capacity requires its own quote, consent and inventory check.
+- Check the selected property's room and bed inventory and record the specific bed allocation. An own queen in Plan A is a whole bed and may be in a shared room. Plan B offers a private queen room, one double-size bunk bed spot, or a shared queen, subject to the selected property's inventory. Shared queens require an eligible same-gender match and consent from both people.
 - Continue through `QUOTE_PENDING`, `OFFERED` and `PAYMENT_PENDING` after approval. Confirm only once the allocated space and applicable quote are agreed, and the organizer has independently verified any required payment. Track waitlist or cancellation in the status field.
 - Keep the Apps Script project, Sheet, sharing, account authorization and secrets restricted to the organizers who need access.
 

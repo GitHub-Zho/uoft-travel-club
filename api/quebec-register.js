@@ -6,7 +6,7 @@ const REGISTRATION_ID = /^QNE-[0-9a-f-]{36}$/;
 const OPTIONS = {
   membership: ['yes', 'no'],
   city: ['own', 'shared', 'none'],
-  chalet: ['own', 'shared', 'none'],
+  chalet: ['own', 'bunk', 'shared', 'none'],
   flight: ['assist', 'self'],
   car: ['share', 'self'],
   driver: ['yes', 'prefer-not', 'no'],

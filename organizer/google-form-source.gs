@@ -320,6 +320,8 @@ function refreshQuebecPricing() {
       labels: Object.fromEntries(updates.map(({ language, prefill, lodging, equipment }) => [language, {
         priorLodging: prefill.chalet.values,
         nextLodging: lodging.data.options,
+        priorLodgingHelp: lodging.item.getHelpText(),
+        nextLodgingHelp: lodging.data.help,
         priorGearHelp: equipment.item.getHelpText(),
         nextGearHelp: equipment.data.help,
       }])),
@@ -331,6 +333,7 @@ function refreshQuebecPricing() {
     for (const { language, property, prefill, chaletPage, chaletHelp, lodging, equipment } of updates) {
       if (lodging.setChoices) lodging.item.setChoiceValues(Object.values(lodging.data.options));
       chaletPage.setHelpText(chaletHelp);
+      lodging.item.setHelpText(lodging.data.help);
       equipment.item.setHelpText(equipment.data.help);
       for (const [key, field] of [['chalet', lodging], ['equipment', equipment]]) {
         const verified = quebecPrefillField_(form, field.item, field.data.options);

@@ -11,7 +11,7 @@ const interest = {
   social: '微信: 测试联系人',
   membership: 'yes',
   city: 'shared',
-  chalet: 'own',
+  chalet: 'bunk',
   companions: '=IMPORTDATA("https://example.invalid")',
   flight: 'assist',
   car: 'share',
@@ -45,14 +45,15 @@ test('a submitted interest creates a private record, with server pricing and no 
   assert.ok(row.Companions.startsWith("'="));
   assert.match(row['Optional activities'], /dog/);
   assert.equal(row['Optional activities'].match(/dog/g).length, 1);
-  assert.equal(row['Accommodation subtotal (CAD)'], 700);
+  assert.equal(row['Chalet bed'], 'bunk');
+  assert.equal(row['Accommodation subtotal (CAD)'], 660);
   assert.equal(row['Activity fee (CAD)'], 80);
   assert.equal(row['Member discount applied at intake (CAD)'], 0);
   assert.equal(row['Member discount if verified (CAD)'], 30);
-  assert.equal(row['Required total at intake (CAD)'], 780);
+  assert.equal(row['Required total at intake (CAD)'], 740);
   assert.equal(row['Amount due now at intake (CAD)'], 0);
-  assert.equal(row['Estimated trip minimum (CAD)'], 2345.99);
-  assert.equal(row['Estimated trip maximum (CAD)'], 2797.99);
+  assert.equal(row['Estimated trip minimum (CAD)'], 2305.99);
+  assert.equal(row['Estimated trip maximum (CAD)'], 2757.99);
   assert.equal(row['Membership verification'], 'PENDING');
   assert.equal(row['Payment verification'], 'UNVERIFIED');
   assert.equal(row['Bed allocation ID'], '');

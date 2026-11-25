@@ -4,12 +4,12 @@ import { calculatePricing, normalizeSelection } from '../assets/quebec/pricing.m
 
 const combinations = [
   ['own', 'none', 440], ['shared', 'none', 260],
-  ['none', 'own', 600], ['none', 'shared', 340],
-  ['own', 'own', 960], ['shared', 'shared', 520],
-  ['own', 'shared', 700], ['shared', 'own', 780],
+  ['none', 'own', 720], ['none', 'bunk', 560], ['none', 'shared', 400],
+  ['own', 'own', 1080], ['own', 'bunk', 920], ['own', 'shared', 760],
+  ['shared', 'own', 900], ['shared', 'bunk', 740], ['shared', 'shared', 580],
 ];
 
-test('all eight stays apply one fee and only a verified member discount', () => {
+test('all lodging combinations apply one fee and only a verified member discount', () => {
   for (const [city, chalet, total] of combinations) {
     const selection = { city, chalet, membership: 'yes' };
     const pending = calculatePricing(selection);
@@ -30,10 +30,10 @@ test('optional estimates do not increase the required fee or amount due', () => 
     city: 'shared', chalet: 'shared', flight: 'assist', car: 'share',
     lift: 'assist', equipment: 'rent', activities: ['ice', 'luge', 'ice'],
   });
-  assert.equal(quote.requiredTotal, 520);
+  assert.equal(quote.requiredTotal, 580);
   assert.equal(quote.amountDueNow, 0);
   assert.deepEqual(quote.optional.lines.map(({ id }) => id), ['flight', 'car', 'ski', 'gear', 'ice', 'luge']);
-  assert.deepEqual(quote.estimatedTotal, { min: 1904.99, max: 2356.99 });
+  assert.deepEqual(quote.estimatedTotal, { min: 1964.99, max: 2416.99 });
 });
 
 test('day sledding and the planned dog outing use fixed published rates', () => {
@@ -42,9 +42,9 @@ test('day sledding and the planned dog outing use fixed published rates', () => 
     { id: 'luge', min: 69, max: 69 },
     { id: 'dog', min: 181, max: 181 },
   ]);
-  assert.equal(quote.requiredTotal, 340);
+  assert.equal(quote.requiredTotal, 400);
   assert.equal(quote.amountDueNow, 0);
-  assert.deepEqual(quote.estimatedTotal, { min: 590, max: 590 });
+  assert.deepEqual(quote.estimatedTotal, { min: 650, max: 650 });
 });
 
 test('hidden mountain choices are cleared from a city-only registration', () => {
@@ -64,7 +64,7 @@ test('hidden mountain choices are cleared from a city-only registration', () => 
 test('Ikon and independent quotes are pending until checked', () => {
   const quote = calculatePricing({ chalet: 'own', lift: 'ikon', equipment: 'self' });
   assert.deepEqual(quote.optional.pending, ['ikon']);
-  assert.deepEqual(quote.estimatedTotal, { min: 600, max: 600 });
+  assert.deepEqual(quote.estimatedTotal, { min: 720, max: 720 });
 });
 
 test('approved payment rules credit lodging deposits and exclude extras', () => {
@@ -74,15 +74,15 @@ test('approved payment rules credit lodging deposits and exclude extras', () => 
   assert.equal(calculatePricing(selection, terms).amountDueNow, 200);
   assert.equal(calculatePricing(selection, { ...terms, quoteApproved: false }).amountDueNow, 0);
   assert.equal(calculatePricing(selection, { ...terms, membershipVerified: false }).amountDueNow, 200);
-  assert.equal(calculatePricing(selection, { ...terms, paymentPolicy: { enabled: true, mode: 'percentage', depositRate: 0.25 } }).amountDueNow, 155);
-  assert.equal(calculatePricing(selection, { ...terms, paymentPolicy: { enabled: true, mode: 'full' } }).amountDueNow, 620);
+  assert.equal(calculatePricing(selection, { ...terms, paymentPolicy: { enabled: true, mode: 'percentage', depositRate: 0.25 } }).amountDueNow, 170);
+  assert.equal(calculatePricing(selection, { ...terms, paymentPolicy: { enabled: true, mode: 'full' } }).amountDueNow, 680);
   assert.equal(calculatePricing(selection, { ...terms, paymentPolicy: { enabled: true, mode: 'fixed' } }).amountDueNow, 0);
 });
 
 
 test('Plan A works with self-arranged lodging, and never includes mountain expenses', () => {
   const quote = calculatePricing({
-    plan: 'a', city: 'self', chalet: 'own', flight: 'assist', car: 'share', lift: 'assist', equipment: 'rent',
+    plan: 'a', city: 'self', chalet: 'bunk', flight: 'assist', car: 'share', lift: 'assist', equipment: 'rent',
   });
   assert.deepEqual(quote.lodging, { city: 0, chalet: 0, total: 0 });
   assert.equal(quote.requiredTotal, 80);
@@ -95,10 +95,10 @@ test('Plan B uses chalet lodging only and excludes independently purchased ticke
   const quote = calculatePricing({
     plan: 'b', city: 'own', chalet: 'shared', flight: 'self', car: 'share', lift: 'self', equipment: 'self',
   });
-  assert.deepEqual(quote.lodging, { city: 0, chalet: 260, total: 260 });
-  assert.equal(quote.requiredTotal, 340);
+  assert.deepEqual(quote.lodging, { city: 0, chalet: 320, total: 320 });
+  assert.equal(quote.requiredTotal, 400);
   assert.deepEqual(quote.optional.lines.map(({ id }) => id), ['car']);
-  assert.deepEqual(quote.estimatedTotal, { min: 590, max: 690 });
+  assert.deepEqual(quote.estimatedTotal, { min: 650, max: 750 });
 });
 
 test('both plans can have no lodging, with one club fee and one verified discount', () => {
