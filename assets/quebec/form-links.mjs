@@ -55,8 +55,8 @@ export const GOOGLE_FORM_PREFILL = {
     "chalet": {
       "entry": "entry.1746862477",
       "values": {
-        "own": "Own queen bed · C$250/person/night × 4 = C$1,000/person",
-        "shared": "Shared queen bed · C$125/person/night × 4 = C$500/person",
+        "own": "Own queen bed · C$130/person/night × 4 = C$520/person",
+        "shared": "Shared queen bed · C$65/person/night × 4 = C$260/person",
         "self": "No accommodation needed"
       }
     },
@@ -136,8 +136,8 @@ export const GOOGLE_FORM_PREFILL = {
     "chalet": {
       "entry": "entry.1006689225",
       "values": {
-        "own": "独享 Queen 床 · C$250/人/晚 × 4晚 = C$1,000/人",
-        "shared": "两人合用 Queen 床 · C$125/人/晚 × 4晚 = C$500/人",
+        "own": "独享 Queen 床 · C$130/人/晚 × 4晚 = C$520/人",
+        "shared": "两人合用 Queen 床 · C$65/人/晚 × 4晚 = C$260/人",
         "self": "不需要住宿"
       }
     },

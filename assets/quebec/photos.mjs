@@ -243,47 +243,42 @@ export const PHOTOS = {
   },
   "refuge-living": {
     "file": "refuge-living.webp",
-    "title": "Refuge 2 living room with white sofas and full-height windows",
+    "title": "Chalet living room reference photo",
     "credit": "Rëzerve listing",
     "alt": {
-      "en": "Refuge 2 living room with white sofas and full-height windows",
-      "zh": "Refuge 2 带白色沙发和落地窗的客厅"
+      "en": "Reference photo of a chalet living room with white sofas and full-height windows",
+      "zh": "木屋风格参考照：带白色沙发和落地窗的客厅"
+    },
+    "caption": {
+      "en": "Chalet style reference · Property pending",
+      "zh": "木屋风格参考图 · 房源待定"
     }
   },
   "refuge-kitchen": {
     "file": "refuge-kitchen.webp",
-    "title": "Refuge 2 kitchen with a black island",
+    "title": "Chalet kitchen reference photo",
     "credit": "Rëzerve listing",
     "alt": {
-      "en": "Refuge 2 kitchen with a black island",
-      "zh": "Refuge 2 配有黑色中岛的厨房"
+      "en": "Reference photo of a chalet kitchen with a black island",
+      "zh": "木屋风格参考照：配有黑色中岛的厨房"
     }
   },
   "refuge-bedroom": {
     "file": "refuge-bedroom.webp",
-    "title": "A queen bedroom at Refuge 2",
+    "title": "Chalet queen bedroom reference photo",
     "credit": "Rëzerve listing",
     "alt": {
-      "en": "A queen bedroom at Refuge 2",
-      "zh": "Refuge 2 的一间 Queen 床卧室"
+      "en": "Reference photo of a chalet bedroom with a queen bed",
+      "zh": "木屋风格参考照：一间摆有 Queen 床的卧室"
     }
   },
   "refuge-terrace": {
     "file": "refuge-terrace.webp",
-    "title": "St. Lawrence River view from the Refuge 2 deck",
+    "title": "Chalet terrace reference photo",
     "credit": "Rëzerve listing",
     "alt": {
-      "en": "St. Lawrence River view from the Refuge 2 deck",
-      "zh": "Refuge 2 俯瞰圣劳伦斯河的露台"
-    }
-  },
-  "refuge-hot-tub": {
-    "file": "refuge-hot-tub.webp",
-    "title": "Refuge 2 cottage and outdoor hot tub",
-    "credit": "Rëzerve listing",
-    "alt": {
-      "en": "Refuge 2 cottage and outdoor hot tub",
-      "zh": "Refuge 2 木屋外景与户外热水浴池"
+      "en": "Reference photo of a chalet's outdoor dining deck",
+      "zh": "木屋风格参考照：带户外餐桌的露台"
     }
   }
 };

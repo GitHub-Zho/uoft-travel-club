@@ -207,38 +207,149 @@ function closeQuebecGoogleForm() {
   if (form.isPublished()) form.setAcceptingResponses(false);
 }
 
+function publishedQuebecForm_(props) {
+  if (props.getProperty('QUEBEC_FORM_SETUP') !== 'READY') throw new Error('The Québec form is not ready.');
+  const form = FormApp.openById(props.getProperty('QUEBEC_FORM_ID'));
+  if (!form.isPublished() || form.getDestinationId() !== props.getProperty('QUEBEC_SHEET_ID')) {
+    throw new Error('Expected the published Québec form and its original response sheet.');
+  }
+  return form;
+}
+
+function findQuebecItem_(items, type, title) {
+  const matches = items.filter((item) => item.getType() === type && item.getTitle() === title);
+  if (matches.length !== 1) throw new Error('Could not identify one Québec form item for ' + title);
+  return matches[0];
+}
+
+function quebecNoticeUpdates_(items, config) {
+  return Object.values(config.localized).flatMap(({ sections }) => {
+    const signing = sections.find(({ key }) => key === 'sign');
+    const page = findQuebecItem_(items, FormApp.ItemType.PAGE_BREAK, signing.title).asPageBreakItem();
+    const fields = signing.questions.filter(({ type }) => type === 'text').map((question) => ({
+      item: findQuebecItem_(items, FormApp.ItemType.TEXT, question.title).asTextItem(),
+      help: question.help,
+    }));
+    return [{ item: page, help: signing.help }, ...fields];
+  });
+}
+
+function applyQuebecNotices_(form, config, updates) {
+  for (const { item, help } of updates) item.setHelpText(help);
+  form.setConfirmationMessage(config.confirmation);
+}
+
 function refreshQuebecRegistrationNotices() {
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(10000)) throw new Error('Another setup run is active.');
   try {
     const props = PropertiesService.getScriptProperties();
-    if (props.getProperty('QUEBEC_FORM_SETUP') !== 'READY') throw new Error('The Québec form is not ready.');
-    const form = FormApp.openById(props.getProperty('QUEBEC_FORM_ID'));
-    if (!form.isPublished() || form.getDestinationId() !== props.getProperty('QUEBEC_SHEET_ID')) {
-      throw new Error('Expected the published Québec form and its original response sheet.');
-    }
+    const form = publishedQuebecForm_(props);
+    const config = quebecFormSpec_();
+    applyQuebecNotices_(form, config, quebecNoticeUpdates_(form.getItems(), config));
+    console.log('Updated the English and Chinese signing guidance and submission confirmation.');
+  } finally {
+    lock.releaseLock();
+  }
+}
 
+function compareQuebecChoices_(left, right) {
+  return JSON.stringify(Object.values(left)) === JSON.stringify(Object.values(right));
+}
+
+function prepareQuebecRadioRefresh_(form, items, data, stored, changeChoices) {
+  if (!stored?.values || !/^entry\.\d+$/.test(stored.entry)) {
+    throw new Error('Missing prefill entry for ' + data.title);
+  }
+  const item = findQuebecItem_(items, FormApp.ItemType.MULTIPLE_CHOICE, data.title).asMultipleChoiceItem();
+  const choices = item.getChoices();
+  if (choices.some((choice) => choice.getPageNavigationType()) || data.branches) {
+    throw new Error('Expected a plain radio item for ' + data.title);
+  }
+  const current = choices.map((choice) => choice.getValue());
+  const matchesDesired = compareQuebecChoices_(current, data.options);
+  const matchesStored = compareQuebecChoices_(current, stored.values);
+  if (!(matchesDesired || matchesStored) || (!changeChoices && !(matchesDesired && matchesStored))) {
+    throw new Error('Unexpected choice labels for ' + data.title);
+  }
+  const before = matchesDesired ? data.options : stored.values;
+  if (quebecPrefillField_(form, item, before).entry !== stored.entry) {
+    throw new Error('Unexpected prefill key for ' + data.title);
+  }
+  return { item, data, entry: stored.entry, setChoices: changeChoices && !matchesDesired };
+}
+
+function refreshQuebecPricing() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(10000)) throw new Error('Another setup run is active.');
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const form = publishedQuebecForm_(props);
+    const sheet = SpreadsheetApp.openById(props.getProperty('QUEBEC_SHEET_ID'));
+    const notes = sheet.getSheetByName('Organizer notes');
+    if (!notes) throw new Error('The existing Québec organizer notes tab was not found.');
     const config = quebecFormSpec_();
     const items = form.getItems();
-    const updates = Object.values(config.localized).map(({ sections }) => {
-      const section = sections.find(({ key }) => key === 'sign');
-      const pages = items.filter((item) => item.getType() === FormApp.ItemType.PAGE_BREAK && item.getTitle() === section.title);
-      if (pages.length !== 1) throw new Error('A signing section could not be identified uniquely.');
-      const fields = section.questions.filter(({ type }) => type === 'text').map((question) => {
-        const matches = items.filter((item) => item.getType() === FormApp.ItemType.TEXT && item.getTitle() === question.title);
-        if (matches.length !== 1) throw new Error('A signing or payment field could not be identified uniquely.');
-        return { item: matches[0].asTextItem(), help: question.help };
-      });
-      return { page: pages[0].asPageBreakItem(), pageHelp: section.help, fields };
+    const notices = quebecNoticeUpdates_(items, config);
+    const updates = Object.entries(config.localized).map(([language, { sections }]) => {
+      const property = 'QUEBEC_PREFILL_' + language.toUpperCase();
+      const prefill = JSON.parse(props.getProperty(property));
+      if (!prefill) throw new Error('Missing prefill mapping for ' + language);
+      const chalet = sections.find(({ key }) => key === 'chalet');
+      const gear = sections.find(({ key }) => key === 'equipment');
+      const chaletPage = findQuebecItem_(items, FormApp.ItemType.PAGE_BREAK, chalet.title).asPageBreakItem();
+      const lodging = prepareQuebecRadioRefresh_(form, items,
+        chalet.questions.find(({ key }) => key === 'chalet'), prefill.chalet, true);
+      const equipment = prepareQuebecRadioRefresh_(form, items,
+        gear.questions.find(({ key }) => key === 'equipment'), prefill.equipment, false);
+      return { language, property, prefill, chaletPage, chaletHelp: chalet.help, lodging, equipment };
     });
 
-    // Update only guidance. Existing questions, answers and routing use the original item IDs.
-    for (const { page, pageHelp, fields } of updates) {
-      page.setHelpText(pageHelp);
-      for (const { item, help } of fields) item.setHelpText(help);
+    // Only Organizer notes is read. Participant response sheets are never touched.
+    const version = config.pricingVersion;
+    if (!version) throw new Error('Missing Québec pricing version.');
+    const heading = 'Live pricing refresh · ' + version;
+    const last = notes.getLastRow();
+    const rows = last ? notes.getRange(1, 1, last, 2).getValues() : [];
+    const existing = rows.findIndex(([label]) => label === heading);
+    const archive = existing < 0 ? {
+      previousVersion: props.getProperty('QUEBEC_LIVE_PRICING_VERSION') ||
+        rows.find(([label]) => label === 'Pricing version / 价格版本')?.[1] || null,
+      targetVersion: version,
+      preparedAt: new Date().toISOString(),
+      labels: Object.fromEntries(updates.map(({ language, prefill, lodging, equipment }) => [language, {
+        priorLodging: prefill.chalet.values,
+        nextLodging: lodging.data.options,
+        priorGearHelp: equipment.item.getHelpText(),
+        nextGearHelp: equipment.data.help,
+      }])),
+    } : JSON.parse(rows[existing][1]);
+    const archiveRow = notes.getRange(existing < 0 ? last + 1 : existing + 1, 1, 1, 2);
+    if (existing < 0) archiveRow.setValues([[heading, JSON.stringify(archive)]]);
+
+    const newProperties = { QUEBEC_LIVE_PRICING_VERSION: version };
+    for (const { language, property, prefill, chaletPage, chaletHelp, lodging, equipment } of updates) {
+      if (lodging.setChoices) lodging.item.setChoiceValues(Object.values(lodging.data.options));
+      chaletPage.setHelpText(chaletHelp);
+      equipment.item.setHelpText(equipment.data.help);
+      for (const [key, field] of [['chalet', lodging], ['equipment', equipment]]) {
+        const verified = quebecPrefillField_(form, field.item, field.data.options);
+        if (verified.entry !== field.entry ||
+            !compareQuebecChoices_(field.item.getChoices().map((choice) => choice.getValue()), field.data.options)) {
+          throw new Error('Could not verify live Québec choice values for ' + language + ' ' + key);
+        }
+        prefill[key] = verified;
+      }
+      newProperties[property] = JSON.stringify(prefill);
     }
-    form.setConfirmationMessage(config.confirmation);
-    console.log('Updated the English and Chinese signing guidance and submission confirmation.');
+    applyQuebecNotices_(form, config, notices);
+    if (!archive.appliedAt) {
+      archive.appliedAt = new Date().toISOString();
+      archiveRow.setValues([[heading, JSON.stringify(archive)]]);
+    }
+    props.setProperties(newProperties);
+    console.log('QUEBEC_PRICING_REFRESH ' + JSON.stringify({ version, status: 'applied' }));
+    for (const { language, property } of updates) console.log('PREFILL_' + language.toUpperCase() + ' ' + newProperties[property]);
   } finally {
     lock.releaseLock();
   }

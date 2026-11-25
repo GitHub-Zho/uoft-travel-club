@@ -9,7 +9,7 @@ const en = {
   flight: option(13, { assist: 'Flight help', self: 'Independent travel' }),
   cityA: option(14, { self: 'No accommodation needed', own: 'Own queen · $360' }),
   cityBoth: option(15, { self: 'No accommodation needed', own: 'Own queen · $360' }),
-  chalet: option(16, { shared: 'Shared queen · $500', own: 'Own queen · $1,000' }),
+  chalet: option(16, { shared: 'Shared queen · $260', own: 'Own queen · $520' }),
   car: option(17, { share: 'Share a car', self: 'Independent ride' }),
   driver: option(18, { no: 'No', yes: 'Yes' }),
   lift: option(19, { none: 'Not skiing', assist: 'Pass help' }),
@@ -39,7 +39,7 @@ test('Plan B skips A and gear without skiing, and both plans respect the target 
   const b = new URL(prefilledRegistrationUrl(config, 'en', {
     plan: 'b', city: 'own', chalet: 'shared', lift: 'none', equipment: 'rent',
   })).searchParams;
-  assert.equal(b.get('entry.16'), 'Shared queen · $500');
+  assert.equal(b.get('entry.16'), 'Shared queen · $260');
   assert.equal(b.get('entry.19'), 'Not skiing');
   assert.equal(b.has('entry.14'), false);
   assert.equal(b.has('entry.20'), false);

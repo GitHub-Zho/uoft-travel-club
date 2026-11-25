@@ -1,4 +1,4 @@
-import { ACTIVITY_IDS, MEMBER_DISCOUNT, OPTIONS, PLANS, STAYS, calculatePricing, stayTotal } from './pricing.mjs';
+import { ACTIVITY_IDS, GEAR_RENTAL, MEMBER_DISCOUNT, OPTIONS, PLANS, STAYS, calculatePricing, stayTotal } from './pricing.mjs';
 import { TRIP, EXPERIENCES } from './content.mjs';
 import { CLUB_EMAIL, REGISTRATION_CLOSES_AT, REGISTRATION_POLICY, TRANSFER_REFERENCE, WAIVER_PATH } from './registration-policy.mjs';
 import { GOOGLE_FORM_OPEN, GOOGLE_FORM_PREFILL } from './form-links.mjs';
@@ -77,7 +77,7 @@ main.innerHTML = `
             <h2>${t(['Accommodation', '住宿'])}</h2>
             <div class="field-grid planner-fields">
               ${stay('city', ['Plan A · Hotel, breakfast included', 'A 段 · 酒店含早餐'])}
-              ${stay('chalet', ['Plan B · Chalet', 'B 段 · 木屋'])}
+              ${stay('chalet', ['Plan B · Chalet near Le Massif', 'B 段 · Le Massif 雪场附近民宿'])}
             </div>
             <p id="sharing-note" class="fine" hidden>${t(['Sharing a queen bed requires a same-gender match and mutual consent.', '双人同床须同性别配对并经双方同意。'])}</p>
           </div>
@@ -106,7 +106,10 @@ main.innerHTML = `
               ${group('equipment', ['Ski or snowboard gear', '滑雪装备'], [
                 ['none', ['No rental needed', '无需租借']],
                 ['own', ['I have my own gear', '自带装备']],
-                ['rent', ['Help me rent gear', '协助租借装备'], estimate('gear')],
+                ['rent', ['Help me rent gear', '协助租借装备'], [
+                  `Weekly, tax included: skis ≈ ${money(GEAR_RENTAL.ski)} · snowboard ≈ ${money(GEAR_RENTAL.snowboard)}`,
+                  `每周含税：双板约 ${money(GEAR_RENTAL.ski)} · 单板约 ${money(GEAR_RENTAL.snowboard)}`,
+                ]],
                 ['self', ['I’ll rent on my own', '自行租借']],
               ], { selected: 'none', id: 'gear-choice' })}
             </div>
@@ -130,7 +133,7 @@ main.innerHTML = `
         <div id="cost-summary" aria-live="polite" aria-atomic="true"></div>
         <button class="button dark planner-submit" type="submit" disabled>${t(['Continue to registration', '继续报名'])} →</button>
         <p id="handoff-message" class="fine" role="status"></p>
-        <p class="fine planner-note">${t(['Prices are in CAD. Self-arranged lodging, transport or gear, taxes, meals, and insurance are outside this estimate.', '金额为加元。自行安排的住宿、交通或装备，以及税费、餐饮和保险均不计入本预估。'])}</p>
+        <p class="fine planner-note">${t(['Prices are in CAD. Weekly gear rental includes estimated tax. Other taxes, self-arranged costs, meals and insurance are outside this estimate.', '金额为加元。雪具周租预算含税。其他税费、自行安排的费用、餐饮和保险不计入本预估。'])}</p>
       </aside>
     </form>
     <details class="planner-disclosure payment-details" id="payment-details">

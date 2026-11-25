@@ -4,9 +4,9 @@ import { calculatePricing, normalizeSelection } from '../assets/quebec/pricing.m
 
 const combinations = [
   ['own', 'none', 440], ['shared', 'none', 260],
-  ['none', 'own', 1080], ['none', 'shared', 580],
-  ['own', 'own', 1440], ['shared', 'shared', 760],
-  ['own', 'shared', 940], ['shared', 'own', 1260],
+  ['none', 'own', 600], ['none', 'shared', 340],
+  ['own', 'own', 960], ['shared', 'shared', 520],
+  ['own', 'shared', 700], ['shared', 'own', 780],
 ];
 
 test('all eight stays apply one fee and only a verified member discount', () => {
@@ -30,10 +30,10 @@ test('optional estimates do not increase the required fee or amount due', () => 
     city: 'shared', chalet: 'shared', flight: 'assist', car: 'share',
     lift: 'assist', equipment: 'rent', activities: ['ice', 'luge', 'ice'],
   });
-  assert.equal(quote.requiredTotal, 760);
+  assert.equal(quote.requiredTotal, 520);
   assert.equal(quote.amountDueNow, 0);
   assert.deepEqual(quote.optional.lines.map(({ id }) => id), ['flight', 'car', 'ski', 'gear', 'ice', 'luge']);
-  assert.deepEqual(quote.estimatedTotal, { min: 2334.99, max: 2821.99 });
+  assert.deepEqual(quote.estimatedTotal, { min: 1904.99, max: 2356.99 });
 });
 
 test('day sledding and the planned dog outing use fixed published rates', () => {
@@ -42,9 +42,9 @@ test('day sledding and the planned dog outing use fixed published rates', () => 
     { id: 'luge', min: 69, max: 69 },
     { id: 'dog', min: 181, max: 181 },
   ]);
-  assert.equal(quote.requiredTotal, 580);
+  assert.equal(quote.requiredTotal, 340);
   assert.equal(quote.amountDueNow, 0);
-  assert.deepEqual(quote.estimatedTotal, { min: 830, max: 830 });
+  assert.deepEqual(quote.estimatedTotal, { min: 590, max: 590 });
 });
 
 test('hidden mountain choices are cleared from a city-only registration', () => {
@@ -64,7 +64,7 @@ test('hidden mountain choices are cleared from a city-only registration', () => 
 test('Ikon and independent quotes are pending until checked', () => {
   const quote = calculatePricing({ chalet: 'own', lift: 'ikon', equipment: 'self' });
   assert.deepEqual(quote.optional.pending, ['ikon']);
-  assert.deepEqual(quote.estimatedTotal, { min: 1080, max: 1080 });
+  assert.deepEqual(quote.estimatedTotal, { min: 600, max: 600 });
 });
 
 test('approved payment rules credit lodging deposits and exclude extras', () => {
@@ -74,8 +74,8 @@ test('approved payment rules credit lodging deposits and exclude extras', () => 
   assert.equal(calculatePricing(selection, terms).amountDueNow, 200);
   assert.equal(calculatePricing(selection, { ...terms, quoteApproved: false }).amountDueNow, 0);
   assert.equal(calculatePricing(selection, { ...terms, membershipVerified: false }).amountDueNow, 200);
-  assert.equal(calculatePricing(selection, { ...terms, paymentPolicy: { enabled: true, mode: 'percentage', depositRate: 0.25 } }).amountDueNow, 215);
-  assert.equal(calculatePricing(selection, { ...terms, paymentPolicy: { enabled: true, mode: 'full' } }).amountDueNow, 860);
+  assert.equal(calculatePricing(selection, { ...terms, paymentPolicy: { enabled: true, mode: 'percentage', depositRate: 0.25 } }).amountDueNow, 155);
+  assert.equal(calculatePricing(selection, { ...terms, paymentPolicy: { enabled: true, mode: 'full' } }).amountDueNow, 620);
   assert.equal(calculatePricing(selection, { ...terms, paymentPolicy: { enabled: true, mode: 'fixed' } }).amountDueNow, 0);
 });
 
@@ -95,10 +95,10 @@ test('Plan B uses chalet lodging only and excludes independently purchased ticke
   const quote = calculatePricing({
     plan: 'b', city: 'own', chalet: 'shared', flight: 'self', car: 'share', lift: 'self', equipment: 'self',
   });
-  assert.deepEqual(quote.lodging, { city: 0, chalet: 500, total: 500 });
-  assert.equal(quote.requiredTotal, 580);
+  assert.deepEqual(quote.lodging, { city: 0, chalet: 260, total: 260 });
+  assert.equal(quote.requiredTotal, 340);
   assert.deepEqual(quote.optional.lines.map(({ id }) => id), ['car']);
-  assert.deepEqual(quote.estimatedTotal, { min: 830, max: 930 });
+  assert.deepEqual(quote.estimatedTotal, { min: 590, max: 690 });
 });
 
 test('both plans can have no lodging, with one club fee and one verified discount', () => {

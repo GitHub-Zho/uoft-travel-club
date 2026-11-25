@@ -14,7 +14,7 @@ export const TRIP = {
     chalet: {
       letter: 'B', title: ['Le Massif Ski & Chalet Getaway', 'Le Massif 滑雪与木屋之旅'],
       dates: ['Jan 2 – Jan 6', '1月2日 – 1月6日'], photo: 'ski-massif-runners',
-      blurb: ['Ski above the St. Lawrence, take a snowshoe walk or explore Baie-Saint-Paul. Back at the chalet, cook dinner together or warm up by the fireplace.', '可以俯瞰圣劳伦斯河滑雪、穿雪鞋散步，或去 Baie-Saint-Paul 逛逛。晚上回木屋一起做饭，在壁炉旁暖暖身子。'],
+      blurb: ['Ski above the St. Lawrence, take a snowshoe walk or explore Baie-Saint-Paul. After a day outdoors, get together for dinner near Le Massif.', '可以俯瞰圣劳伦斯河滑雪、穿雪鞋散步，或去 Baie-Saint-Paul 逛逛。白天玩雪，晚上在 Le Massif 附近一起吃饭。'],
     },
   },
 };
@@ -96,7 +96,7 @@ export const EXPERIENCES = {
   },
   snowshoe: {
     title: ['Snowshoeing & winter walks', '雪鞋徒步与冬日散步'],
-    copy: ['Choose a scenic route that suits snow and trail conditions. Shared chalet snowshoes are listed and availability needs checking.', '按积雪和步道状况选择路线。木屋标注提供雪鞋，实际数量和可用性待确认。'],
+    copy: ['Choose a scenic route that suits snow and trail conditions. Bring your own snowshoes or check local rentals.', '按积雪和步道状况选择路线。请自备雪鞋，或查询当地租借选项。'],
     note: ['Free self-guided where access and equipment are available. Rentals or guides require a quote.', '在步道开放并自备装备的情况下可免费自行游玩。租装备或向导需另询价。'],
   },
   baie: {
@@ -114,7 +114,7 @@ export const EXPERIENCES = {
 
 export const LODGING = {
   city: {
-    title: 'Hôtel & Suites Le Dauphin Québec',
+    title: ['Hôtel & Suites Le Dauphin Québec', 'Hôtel & Suites Le Dauphin Québec'],
     photos: ['hotel-room', 'hotel-breakfast', 'hotel-pool'],
     area: ['Québec City · 400 rue du Marais', '魁北克城 · 400 rue du Marais'],
     highlights: [['Buffet breakfast included', '含自助早餐'], ['Indoor pool', '室内泳池'], ['In-room Wi-Fi', '客房 Wi-Fi']],
@@ -122,11 +122,12 @@ export const LODGING = {
     inventory: ['A two-queen room type is listed for up to four guests. Group inventory and exact room types will be confirmed by the club.', '酒店有最多可住四人的双 Queen 床房型。实际团体房量和房型由俱乐部确认。'],
   },
   chalet: {
-    title: 'Refuge 2',
-    photos: ['refuge-hot-tub', 'refuge-living', 'refuge-kitchen', 'refuge-bedroom', 'refuge-terrace'],
-    area: ['Les Éboulements · Charlevoix', 'Les Éboulements · Charlevoix'],
-    highlights: [['St. Lawrence River views', '圣劳伦斯河景'], ['Outdoor hot tub', '户外热水浴池'], ['Full kitchen', '全套厨房']],
-    copy: ['Make dinner together around the kitchen island or unwind by the fireplace after a day outside. The deck overlooks the St. Lawrence. Hot tub and BBQ use depend on winter availability and house rules.', '白天玩雪，晚上围着厨房中岛一起做饭，或到壁炉旁休息。露台俯瞰圣劳伦斯河。热水浴池和烤炉的使用以冬季开放情况与房屋规定为准。'],
-    inventory: ['Three queen bedrooms and a separate sleeper sofa, with a listed maximum of eight guests. The sofa is outside the current queen-bed options.', '三间 Queen 床卧室，另有一张沙发床，房源标注最多可住八人。沙发床暂不在 Queen 床报名选项内。'],
+    title: ['Chalet near Le Massif', 'Le Massif 雪场附近民宿'],
+    photos: ['refuge-living', 'refuge-kitchen', 'refuge-bedroom', 'refuge-terrace'],
+    area: ['Charlevoix · Property pending', 'Charlevoix · 房源待定'],
+    highlights: [['Chalet style', '木屋风格'], ['Shared gathering space', '公共活动空间'], ['Kitchen & BBQ preferred', '优先考虑厨房和 BBQ']],
+    photoNote: ['Reference photos show the chalet style we’re looking for.', '图片仅供参考，展示我们在寻找的木屋风格。'],
+    copy: ['We’re looking for a wood-style chalet with a common area for the group. We’re aiming for a kitchen and BBQ, subject to the selected property and its winter rules.', '我们计划选一间带公共活动空间的木屋风格民宿，方便大家一起吃饭聊天。预计会考虑带厨房和 BBQ 的房源，具体以选定房源及冬季使用规定为准。'],
+    inventory: ['The property, amenities and bed layout are pending confirmation.', '实际房源、设施和床位安排待确认。'],
   },
 };

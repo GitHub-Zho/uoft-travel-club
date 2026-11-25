@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { gzipSync } from 'node:zlib';
-import { ACTIVITY_FEE, MEMBER_DISCOUNT, OPTIONS, PLANS, PRICING_VERSION, STAYS, stayTotal } from '../assets/quebec/pricing.mjs';
+import { ACTIVITY_FEE, GEAR_RENTAL, MEMBER_DISCOUNT, OPTIONS, PLANS, PRICING_VERSION, STAYS, stayTotal } from '../assets/quebec/pricing.mjs';
 import { CLUB_EMAIL, REGISTRATION_CLOSES_AT, REGISTRATION_POLICY, WAIVER_URL } from '../assets/quebec/registration-policy.mjs';
 
 const policy = REGISTRATION_POLICY;
@@ -43,7 +43,8 @@ function localizedForm(language) {
     `Per person: Québec City ${cash(stayTotal('city', 'own'))} own bed / ${cash(stayTotal('city', 'shared'))} shared bed. Le Massif chalet ${cash(stayTotal('chalet', 'own'))} own bed / ${cash(stayTotal('chalet', 'shared'))} shared bed. Add the amounts if you selected lodging for both stays.`,
     `每人定金：魁北克城独享床 ${cash(stayTotal('city', 'own'))}／合用床 ${cash(stayTotal('city', 'shared'))}。Le Massif 木屋独享床 ${cash(stayTotal('chalet', 'own'))}／合用床 ${cash(stayTotal('chalet', 'shared'))}。如两段都选了住宿，请将两段金额相加。`,
   );
-  const payment = [translate(policy.deposit), depositAmounts, lines(policy.transferMessage, policy.paymentVerification)].join('\n');
+  const depositInstructions = lines(policy.transferMessage, policy.paymentVerification);
+  const payment = [translate(policy.deposit), depositAmounts, depositInstructions].join('\n');
   const otherTerms = [fees, lines(policy.refund, policy.followUp)].join('\n\n');
   const terms = [
     payment, otherTerms,
@@ -76,7 +77,6 @@ function localizedForm(language) {
   const planOptions = Object.fromEntries(Object.keys(PLANS).map((plan) => [plan, planTitles[plan]]));
   const sharedRide = estimate(OPTIONS.car);
   const skiBudget = estimate(OPTIONS.ski);
-  const gearBudget = estimate(OPTIONS.gear);
   const flightBudget = estimate(OPTIONS.flight);
   const receipt = {
     intro: words(
@@ -87,7 +87,10 @@ function localizedForm(language) {
       'Electronic signature\nYour signature is saved with this response. You do not need to submit a separate signed PDF. Keep this email for your records.\n' + policy.waiverVersion + '\n' + WAIVER_URL + '\n' + policy.riskVersion,
       '电子签署\n你的签名已随答卷保存，无需另交签名 PDF。请留存这封回执。\nUTETC 一般活动免责声明 v1.0\n' + WAIVER_URL + '\n魁北克跨年之旅行程风险确认 v1.0',
     ),
-    payment: paymentHeading + '\n' + payment,
+    payment: [paymentHeading, translate(policy.deposit), words(
+      'Use the lodging totals in your answers below. If you selected club lodging for both stays, add the amounts together.',
+      '请按下方答卷所列的住宿金额转账。如两段都选了俱乐部住宿，请将两段金额相加。',
+    ), depositInstructions].join('\n'),
     subject: words('UTETC Québec 2027 · Your registration answers', 'UTETC 魁北克跨年之旅 · 你的报名答复'),
     submitted: words('Submitted', '提交时间'),
     answers: words('Your answers', '你的答复'),
@@ -145,14 +148,17 @@ function localizedForm(language) {
           help: words('Four-day ticket budget: ' + skiBudget + '/person. Ikon access is subject to pass terms.',
             '四天雪票参考预算 ' + skiBudget + '/人。Ikon 能否使用以通行证条款为准。'),
         }),
-      ], undefined, words('Jan 2–6 · 4 nights', '1月2–6日 · 4晚')),
+      ], undefined, words('Jan 2–6 · 4 nights · Chalet near Le Massif. The property and amenities are pending confirmation.', '1月2–6日 · 4晚 · Le Massif 雪场附近民宿，具体住宿与设施待确认。')),
       section('equipment', words('Ski or snowboard equipment', '滑雪装备'), [
         radio('equipment', words('What equipment help do you need?', '你需要协助安排雪具吗？'), {
           own: words('I have my own equipment', '自带雪具'),
           rent: words('Help renting equipment', '希望协助租借装备'),
           self: words('I’ll arrange equipment myself', '自行安排雪具'),
           none: words('I’ll decide later', '稍后决定'),
-        }, { help: words('Estimated four-day rental: ' + gearBudget + '/person.', '四天雪具租赁参考预算 ' + gearBudget + '/人。') }),
+        }, { help: words(
+          `Estimated adult weekly rental at Sports aux Puces Québec, tax included: ski equipment ≈ ${cash(GEAR_RENTAL.ski)}, snowboard equipment ≈ ${cash(GEAR_RENTAL.snowboard)}. Check availability and helmet pricing separately.`,
+          `Sports aux Puces Québec 成人周租含税预估：双板约 ${cash(GEAR_RENTAL.ski)}，单板约 ${cash(GEAR_RENTAL.snowboard)}。库存与头盔费用另行确认。`,
+        ) + '\n' + GEAR_RENTAL.url }),
       ], 'sign'),
       section('sign', words('Payment and electronic signature', '付款与电子签署'), [
         text('transferAmount', words('Amount already sent by e-Transfer (CAD)', '已转账金额（CAD）'), {
@@ -185,6 +191,7 @@ export function createGoogleFormSpec() {
       '已收到报名答复和电子签名，请留存邮件副本。如选择俱乐部住宿，请通过 Interac e-Transfer 将所选住宿定金转至 ' + CLUB_EMAIL + '。金额和转账备注见邮件回执。',
     ].join('\n\n'),
     closesAt: REGISTRATION_CLOSES_AT,
+    pricingVersion: PRICING_VERSION,
     localized,
     metadata: [
       ['General waiver / 一般活动免责声明', policy.waiverVersion + ' · ' + WAIVER_URL],

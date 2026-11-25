@@ -1,4 +1,4 @@
-import { ACTIVITY_FEE, MEMBER_DISCOUNT, OPTIONS, STAYS, stayTotal } from './pricing.mjs';
+import { ACTIVITY_FEE, GEAR_RENTAL, MEMBER_DISCOUNT, OPTIONS, STAYS, stayTotal } from './pricing.mjs';
 import { TRIP, DAYS, EXPERIENCES, GOBLIN_STOPS, LODGING } from './content.mjs';
 import { PHOTOS } from './photos.mjs';
 import { REGISTRATION_POLICY } from './registration-policy.mjs';
@@ -105,11 +105,11 @@ function chaletPlan() {
     <h2 id="chalet-title">${t(part.title)}</h2>
     <div class="plan-gallery chalet-gallery">
       ${photo(part.photo, { className: 'plan-photo-main' })}
-      ${photo('refuge-hot-tub', { className: 'plan-photo-side' })}
+      ${photo(LODGING.chalet.photos[0], { className: 'plan-photo-side' })}
     </div>
     <div class="plan-description">
       <p>${t(part.blurb)}</p>
-      <p>${t(['Skiing and snowboarding are optional. The chalet lists a kitchen, BBQ and outdoor hot tub, subject to winter availability.', '滑双板或单板都自愿。木屋配有厨房、烤炉和户外热水浴池，部分设施以冬季开放状况为准。'])}
+      <p>${t(['Skiing and snowboarding are optional. We’re looking for a chalet near Le Massif. The property and amenities are pending confirmation.', '滑双板和单板均为自选项目。我们正在找 Le Massif 雪场附近的民宿，房源及设施待确认。'])}
         <a href="https://www.lemassif.com/en/the-mountain/winter/image-gallery">${t(['Le Massif winter gallery', 'Le Massif 官方冬季相册'])} <span aria-hidden="true">↗</span></a>
       </p>
     </div>
@@ -138,8 +138,9 @@ function stayCard([key, stay]) {
   return `<article class="stay-card">
     <header class="stay-header">
       <p class="part-dates">${t(info.area)} · ${t(TRIP.parts[key].dates)}</p>
-      <h3>${escapeHtml(info.title)}</h3>
+      <h3>${t(info.title)}</h3>
       <ul class="stay-highlights">${info.highlights.map(label => `<li>${t(label)}</li>`).join('')}</ul>
+      ${info.photoNote ? `<p class="fine">${t(info.photoNote)}</p>` : ''}
     </header>
     <div class="stay-gallery" style="--thumbnail-count: ${info.photos.length - 1}">
       ${info.photos.map(id => `<a href="${PHOTO_PATH}${PHOTOS[id].file}" target="_blank" rel="noopener">${photo(id, { caption: false })}</a>`).join('')}
@@ -180,7 +181,8 @@ const fees = t([
   `每人收取一次 ${money(ACTIVITY_FEE)} 加元活动费，核实为 UTETC 会员后减免 ${money(MEMBER_DISCOUNT)} 加元。`,
 ]);
 const ski = range(OPTIONS.ski.min, OPTIONS.ski.max);
-const gear = range(OPTIONS.gear.min, OPTIONS.gear.max);
+const gearSki = money(GEAR_RENTAL.ski);
+const gearSnowboard = money(GEAR_RENTAL.snowboard);
 const eventMain = document.querySelector('#main');
 eventMain.innerHTML = `
   <section class="hero" aria-labelledby="trip-title">
@@ -217,7 +219,9 @@ eventMain.innerHTML = `
       ${accordion('transport', ['Flights & local transportation', '航班与当地交通'], transportation())}
       ${accordion('pricing', ['Pricing & registration', '费用与报名'], `
         <p class="panel-intro">${fees}</p>
-        <p>${t([`Plan B only: budget about ${ski} per person for four days of lift tickets and ${gear} for four days of rental gear, before tax. Confirm Ikon access, tickets and equipment separately.`, `仅 B 段：四天雪票预计每人 ${ski}，四天雪具预计每人 ${gear}，均未含税。请分别核实 Ikon 权益、雪票和雪具价格。`])}</p>
+        <p>${t([`Plan B only: budget about ${ski} CAD per person for four days of lift tickets, before tax. Check your Ikon access and ticket availability.`, `仅 B 段：四天雪票预计每人 ${ski} 加元，未含税。请核实 Ikon 权益和雪票供应。`])}</p>
+        <p>${t([`Optional adult weekly gear rental off-mountain: about ${gearSki} CAD for skis or ${gearSnowboard} CAD for a snowboard, including tax. Check sizes and availability with the shop.`, `可选雪具周租（雪场外）：成人双板约 ${gearSki} 加元、单板约 ${gearSnowboard} 加元，均含税。请向店家确认尺码与库存。`])}
+          <a href="${GEAR_RENTAL.url}">Sports aux Puces Québec <span aria-hidden="true">↗</span></a></p>
         <p class="fine">${t(['Choose your stay in the trip planner to see your lodging deposit. The trip estimate includes other costs you pay separately.', '在行程规划页选择住宿即可查看应付定金。行程预估还包括需另付的其他费用。'])}</p>
         <ul class="event-registration-terms">${['deadline', 'deposit', 'refund', 'flights', 'followUp'].map(key =>
           `<li>${t(REGISTRATION_POLICY[key])}</li>`).join('')}</ul>

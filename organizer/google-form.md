@@ -1,6 +1,6 @@
 # Québec 2027 Google Form
 
-The Québec form uses one club-owned draft, a private event spreadsheet and separate English and Simplified Chinese routes. Participants choose their plan and then see the lodging and transport questions that apply. Selecting “Not skiing” skips equipment. The form collects a versioned adult waiver agreement and electronic signature, with the submission timestamp recorded by Forms.
+The Québec form is club-owned and uses a private event spreadsheet and separate English and Simplified Chinese routes. Participants choose their plan and then see the lodging and transport questions that apply. Selecting “Not skiing” skips equipment. The form collects a versioned adult waiver agreement and electronic signature, with the submission timestamp recorded by Forms.
 
 ## Update the existing draft
 
@@ -14,6 +14,12 @@ Use `createQuebecGoogleForm` only when provisioning a new event draft. It create
 ## Refresh the live registration notices
 
 Build and save the generated Apps Script in the club’s existing project, then run `refreshQuebecRegistrationNotices`. It updates the existing English and Chinese signing-page descriptions, field help, and submission confirmation. It preserves question IDs, branching, responses, and sharing. Future submissions use the updated receipt text from the saved script.
+
+## Refresh live Plan B prices
+
+Build and save the generated script in the existing club project, then run `refreshQuebecPricing`. It updates the Plan B lodging labels, chalet description, gear rental guidance, and signing and deposit instructions in place. The function compares the recorded prefill keys with Google-generated, unsubmitted URLs before and after the update. Use the logged `PREFILL_EN` and `PREFILL_ZH` to confirm the website mapping in `assets/quebec/form-links.mjs`.
+
+Organizer notes keeps the previous and new choice labels and gear guidance with the pricing version and application time. Existing response rows keep their submitted labels. Use those labels and the original receipt when reviewing earlier lodging payments. The form, linked Sheet, and existing triggers stay in place.
 
 ## Registration and organizer review
 

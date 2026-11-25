@@ -1,4 +1,4 @@
-export const PRICING_VERSION = '2026-11-23.3';
+export const PRICING_VERSION = '2026-11-24.1';
 export const CURRENCY = 'CAD';
 export const ACTIVITY_FEE = 80;
 export const MEMBER_DISCOUNT = 30;
@@ -10,14 +10,18 @@ export const PLANS = Object.freeze({ a: ['city'], b: ['chalet'], both: ['city', 
 
 export const STAYS = {
   city: { nights: 3, nightly: { own: 120, shared: 60 }, dates: ['2026-12-30', '2027-01-02'] },
-  chalet: { nights: 4, nightly: { own: 250, shared: 125 }, dates: ['2027-01-02', '2027-01-06'] },
+  chalet: { nights: 4, nightly: { own: 130, shared: 65 }, dates: ['2027-01-02', '2027-01-06'] },
+};
+
+export const GEAR_RENTAL = {
+  ski: 130, snowboard: 175, url: 'https://sportsauxpucesquebec.com/pages/location-dequipement',
 };
 
 export const OPTIONS = {
   flight: { min: 450, max: 550, source: 'organizer estimate' },
   car: { min: 250, max: 350, source: 'organizer estimate' },
   ski: { min: 450, max: 650, source: 'planning range', segment: 'chalet' },
-  gear: { min: 320, max: 400, source: 'planning range', segment: 'chalet' },
+  gear: { min: GEAR_RENTAL.ski, max: GEAR_RENTAL.snowboard, source: 'Sports aux Puces Québec adult weekly estimate, tax included', segment: 'chalet' },
   citywalk: { min: 0, max: 0, source: 'free walk', segment: 'city' },
   nye: { min: 0, max: 0, source: 'official public event', segment: 'city' },
   ice: { min: 35.99, max: 42.99, source: 'operator rates online/on site', segment: 'city' },

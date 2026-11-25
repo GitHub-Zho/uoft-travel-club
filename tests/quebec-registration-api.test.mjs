@@ -45,14 +45,14 @@ test('a submitted interest creates a private record, with server pricing and no 
   assert.ok(row.Companions.startsWith("'="));
   assert.match(row['Optional activities'], /dog/);
   assert.equal(row['Optional activities'].match(/dog/g).length, 1);
-  assert.equal(row['Accommodation subtotal (CAD)'], 1180);
+  assert.equal(row['Accommodation subtotal (CAD)'], 700);
   assert.equal(row['Activity fee (CAD)'], 80);
   assert.equal(row['Member discount applied at intake (CAD)'], 0);
   assert.equal(row['Member discount if verified (CAD)'], 30);
-  assert.equal(row['Required total at intake (CAD)'], 1260);
+  assert.equal(row['Required total at intake (CAD)'], 780);
   assert.equal(row['Amount due now at intake (CAD)'], 0);
-  assert.equal(row['Estimated trip minimum (CAD)'], 3015.99);
-  assert.equal(row['Estimated trip maximum (CAD)'], 3502.99);
+  assert.equal(row['Estimated trip minimum (CAD)'], 2345.99);
+  assert.equal(row['Estimated trip maximum (CAD)'], 2797.99);
   assert.equal(row['Membership verification'], 'PENDING');
   assert.equal(row['Payment verification'], 'UNVERIFIED');
   assert.equal(row['Bed allocation ID'], '');

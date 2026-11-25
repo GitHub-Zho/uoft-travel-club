@@ -3,6 +3,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { gunzipSync } from 'node:zlib';
 import { buildGoogleFormSource, createGoogleFormSpec } from '../organizer/build-google-form.mjs';
+import { GOOGLE_FORM_PREFILL } from '../assets/quebec/form-links.mjs';
 
 const spec = createGoogleFormSpec();
 const source = await buildGoogleFormSource();
@@ -21,8 +22,18 @@ function harness({ ready = true, published = false, responses = [], mismatch = f
     getSheets: () => [notes],
     getSheetByName: (name) => name === 'Organizer notes' ? notes : undefined,
   };
-  const notes = { setName: () => notes, getLastRow: () => sheetRows.length,
-    getRange: () => ({ setValues: (values) => sheetRows.push(...values) }) };
+  const notes = {
+    setName: () => notes,
+    getLastRow: () => sheetRows.length,
+    getRange: (row, column, rowCount, columnCount) => ({
+      getValues: () => Array.from({ length: rowCount }, (_, index) =>
+        Array.from({ length: columnCount }, (_, offset) => sheetRows[row + index - 1]?.[column + offset - 1] ?? '')),
+      setValues: (values) => values.forEach((valuesRow, index) => {
+        const sheetRow = sheetRows[row + index - 1] ??= [];
+        valuesRow.forEach((cell, offset) => { sheetRow[column + offset - 1] = cell; });
+      }),
+    }),
+  };
   const form = {
     getId: () => 'original-form',
     getDestinationId: () => mismatch ? 'incorrect-sheet' : 'original-sheet',
@@ -52,7 +63,11 @@ function harness({ ready = true, published = false, responses = [], mismatch = f
     form['add' + method + 'Item'] = () => {
       const id = ++nextId;
       const item = { id, type, getId: () => id, getTitle: () => item.Title,
-        getType: () => type, asPageBreakItem: () => item, asTextItem: () => item,
+        getHelpText: () => item.HelpText,
+        getType: () => type, asPageBreakItem: () => item, asTextItem: () => item, asMultipleChoiceItem: () => item,
+        getChoices: () => (item.Choices ?? item.ChoiceValues?.map((value) => ({ value })) ?? []).map(({ value, target }) => ({
+          getValue: () => value, getPageNavigationType: () => target ?? null,
+        })),
         createChoice: (value, target) => ({ value, target }),
         createResponse: (value) => ({ id, value }),
       };
@@ -67,7 +82,7 @@ function harness({ ready = true, published = false, responses = [], mismatch = f
   const services = {
     FormApp: {
       PageNavigationType: { SUBMIT: 'SUBMIT' }, DestinationType: { SPREADSHEET: 'SPREADSHEET' },
-      ItemType: { PAGE_BREAK: 'page', TEXT: 'text' },
+      ItemType: { PAGE_BREAK: 'page', TEXT: 'text', MULTIPLE_CHOICE: 'radio' },
       create(_, visible) { assert.equal(visible, false); created++; return form; },
       openById: () => form,
       createTextValidation: () => ({
@@ -182,11 +197,53 @@ test('updates both sets of notices on the published form without changing respon
 
   assert.match(signingPages[0].HelpText, /Sign in this form[\s\S]+After submitting your registration[\s\S]+uoft.travelclub@gmail.com/);
   assert.match(signingPages[1].HelpText, /在本表内完成电子签署[\s\S]+提交报名后转住宿定金/);
+  assert.match(signingPages[0].HelpText, /C\$360.*C\$180.*C\$520.*C\$260/);
   assert.match(form.ConfirmationMessage, /electronic signature received[\s\S]+Interac e-Transfer/);
   assert.deepEqual(items.map(({ id, Title, Required, GoToPage, Choices }) => [id, Title, Required, GoToPage, Choices]), originalItems);
   assert.equal(form.getResponses(), responses);
   assert.equal(form.isPublished(), true);
   assert.deepEqual([emails.length, triggers.length, sheetRows.length], [0, 0, 0]);
+});
+
+test('live pricing changes only the original chalet choices and archives the previous labels on the first run', () => {
+  const responses = [{ id: 'existing-response', value: 'previous rate' }];
+  const { runtime, form, props, items, logs, emails, triggers, sheetRows } = harness({ published: true, responses });
+  const { prefill } = runtime.appendQuebecSections_(form, spec);
+  const findByEntry = (entry) => items.find(({ id }) => id + 1000 === Number(entry.slice(6)));
+  const oldOptions = {
+    en: ['Own queen bed · C$250/person/night × 4 = C$1,000/person', 'Shared queen bed · C$125/person/night × 4 = C$500/person'],
+    zh: ['独享 Queen 床 · C$250/人/晚 × 4晚 = C$1,000/人', '两人合用 Queen 床 · C$125/人/晚 × 4晚 = C$500/人'],
+  };
+  sheetRows.push(['Pricing version / 价格版本', 'previous-pricing']);
+  for (const language of ['en', 'zh']) {
+    const before = structuredClone(prefill[language]);
+    [before.chalet.values.own, before.chalet.values.shared] = oldOptions[language];
+    findByEntry(before.chalet.entry).setChoiceValues(Object.values(before.chalet.values));
+    findByEntry(before.equipment.entry).setHelpText('previous gear help');
+    props.set('QUEBEC_PREFILL_' + language.toUpperCase(), JSON.stringify(before));
+  }
+  const originalItems = items.map(({ id, Title, Required, GoToPage, Choices }) => [id, Title, Required, GoToPage, Choices]);
+  runtime.refreshQuebecPricing();
+  runtime.refreshQuebecPricing();
+
+  for (const language of ['en', 'zh']) {
+    const after = JSON.parse(props.get('QUEBEC_PREFILL_' + language.toUpperCase()));
+    assert.deepEqual(after, JSON.parse(JSON.stringify(prefill[language])));
+    assert.deepEqual(after.chalet.values, GOOGLE_FORM_PREFILL[language].chalet.values);
+    assert.deepEqual([...findByEntry(after.chalet.entry).ChoiceValues], Object.values(after.chalet.values));
+    assert.match(findByEntry(after.equipment.entry).HelpText, /C\$130.*C\$175/);
+  }
+  assert.deepEqual(items.map(({ id, Title, Required, GoToPage, Choices }) => [id, Title, Required, GoToPage, Choices]), originalItems);
+  assert.equal(sheetRows.length, 2);
+  const archive = JSON.parse(sheetRows[1][1]);
+  assert.equal(archive.previousVersion, 'previous-pricing');
+  assert.equal(archive.labels.en.priorLodging.own, oldOptions.en[0]);
+  assert.equal(archive.labels.zh.priorGearHelp, 'previous gear help');
+  assert.match(archive.appliedAt, /^2026-/);
+  assert.ok(logs.some((line) => line.startsWith('QUEBEC_PRICING_REFRESH ')));
+  assert.equal(form.getResponses(), responses);
+  assert.equal(form.isPublished(), true);
+  assert.deepEqual([emails.length, triggers.length], [0, 0]);
 });
 
 test('English and Chinese each follow the correct routes for A, B and both plans', () => {
@@ -216,14 +273,15 @@ test('English and Chinese each follow the correct routes for A, B and both plans
     assert.equal(Object.keys(chalet.values).join(','), 'own,shared,self');
     assert.match(cityA.values.own, /120.*360/);
     assert.match(cityA.values.shared, /60.*180/);
-    assert.match(chalet.values.own, /250.*1,000/);
-    assert.match(chalet.values.shared, /125.*500/);
+    assert.match(chalet.values.own, /130.*520/);
+    assert.match(chalet.values.shared, /65.*260/);
+    assert.match(lookup(equipment.entry).HelpText, /C\$130.*C\$175/);
   }
 });
 
 test('receipts follow the selected language and report answers without confirming payment', () => {
   const { runtime, form, props, items, emails } = harness();
-  runtime.updateQuebecGoogleForm();
+  const { prefill } = runtime.updateQuebecGoogleForm();
   const answer = (id, value) => ({
     getItem: () => items.find((item) => String(item.id) === id), getResponse: () => value,
   });
@@ -233,8 +291,10 @@ test('receipts follow the selected language and report answers without confirmin
     const emailId = props.get('QUEBEC_EMAIL_ITEM_ID_' + language.toUpperCase());
     const otherLanguage = language === 'en' ? 'ZH' : 'EN';
     const otherEmail = props.get('QUEBEC_EMAIL_ITEM_ID_' + otherLanguage);
+    const lodgingId = String(Number(prefill[language].chalet.entry.slice(6)) - 1000);
+    const lodging = language === 'en' ? prefill.en.chalet.values.shared : '独享 Queen 床 · C$250/人/晚 × 4晚 = C$1,000/人';
     const response = {
-      getItemResponses: () => [answer(otherEmail, ''), answer(emailId, 'tester@example.invalid')],
+      getItemResponses: () => [answer(otherEmail, ''), answer(emailId, 'tester@example.invalid'), answer(lodgingId, lodging)],
       getTimestamp: () => new Date('2026-11-24T17:00:00Z'),
     };
     runtime.sendQuebecAnswerCopy({ source: { getId: () => 'another-form' }, response });
@@ -247,7 +307,6 @@ test('receipts follow the selected language and report answers without confirmin
     assert.doesNotMatch(email.body, /original-form|original-sheet/);
     assert.match(email.body, /general-club-participation-waiver\.pdf/);
     assert.match(email.body, /Interac e-Transfer[^\n]*uoft\.travelclub@gmail\.com/);
-    assert.match(email.body, /C\$360.*C\$180.*C\$1,000.*C\$500/);
   }
   assert.match(emails[0].body, /72 hours/);
   assert.match(emails[0].body, /payment.*verified/i);
@@ -257,6 +316,11 @@ test('receipts follow the selected language and report answers without confirmin
   assert.match(emails[1].body, /付款.*核实/);
   assert.match(emails[0].body, /Electronic signature[\s\S]+after submitting[\s\S]+Your answers/);
   assert.match(emails[1].body, /电子签署[\s\S]+提交报名后转住宿定金[\s\S]+你的答复/);
+  assert.match(emails[0].body, /Use the lodging totals in your answers below/);
+  assert.match(emails[1].body, /请按下方答卷所列的住宿金额转账/);
+  assert.match(emails[0].body, /C\$260\/person/);
+  assert.match(emails[1].body, /C\$1,000\/人/);
+  assert.doesNotMatch(emails[1].body, /C\$520/);
 });
 
 test('a fresh setup remains unpublished and installs only the receipt and cutoff triggers', () => {
